@@ -5,7 +5,12 @@
       "mcp__ide__getDiagnostics",
       "Bash(npm run build:*)",
       "Bash(npm install)",
-      "Bash(ng generate:*)"
+      "Bash(ng generate:*)",
+      "Bash(npm install:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(npm run deploy:*)"
     ],
     "deny": [],
     "ask": []
