@@ -10,6 +10,12 @@ import { TranslationService } from '../../services/translation.service';
         <div class="star" *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]"></div>
       </div>
 
+      <!-- Language Toggle Button -->
+      <button class="language-toggle-login" (click)="toggleLanguage()">
+        <span class="flag">{{ currentLanguage === 'en' ? '🇵🇱' : '🇬🇧' }}</span>
+        {{ translate('switch_language') }}
+      </button>
+
       <div class="login-card">
         <div class="logo-section">
           <div class="logo-circle">
@@ -81,6 +87,35 @@ import { TranslationService } from '../../services/translation.service';
       right: 0;
       bottom: 0;
       overflow: hidden;
+    }
+
+    .language-toggle-login {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: white;
+      border: none;
+      border-radius: 25px;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      font-family: 'Comic Sans MS', cursive;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 1000;
+    }
+
+    .language-toggle-login:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .language-toggle-login .flag {
+      font-size: 24px;
     }
 
     .star {
@@ -326,14 +361,24 @@ import { TranslationService } from '../../services/translation.service';
 export class LoginComponent {
   password: string = '';
   showError: boolean = false;
+  currentLanguage: 'en' | 'pl' = 'en';
 
   constructor(
     private authService: AuthService,
     public translationService: TranslationService
-  ) {}
+  ) {
+    this.currentLanguage = this.translationService.getCurrentLanguage();
+    this.translationService.currentLanguage$.subscribe(lang => {
+      this.currentLanguage = lang;
+    });
+  }
 
   translate(key: string): string {
     return this.translationService.translate(key);
+  }
+
+  toggleLanguage(): void {
+    this.translationService.toggleLanguage();
   }
 
   onLogin(): void {
