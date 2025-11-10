@@ -65,10 +65,10 @@ import { ProgressService } from './services/progress.service';
           </div>
         </div>
 
-        <!-- Michal's Section (Right) -->
+        <!-- Michał's Section (Right) -->
         <div class="section michal-section">
           <div class="header">
-            <h1 class="name-title">MICHAL</h1>
+            <h1 class="name-title">MICHAŁ</h1>
             <div class="emoji">🎮</div>
           </div>
           <div class="content-area">
