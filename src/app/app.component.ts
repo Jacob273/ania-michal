@@ -1,13 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslationService } from './services/translation.service';
 import { ProgressService } from './services/progress.service';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
   template: `
     <div class="app-wrapper">
+      <!-- Login Screen -->
+      <app-login *ngIf="!isAuthenticated"></app-login>
+
       <!-- Home Screen -->
-      <div class="container" *ngIf="currentView === 'home'">
+      <div class="container" *ngIf="currentView === 'home' && isAuthenticated">
         <!-- Language Toggle Button -->
         <button class="language-toggle" (click)="toggleLanguage()">
           <span class="flag">{{ currentLanguage === 'en' ? '🇵🇱' : '🇬🇧' }}</span>
@@ -119,14 +123,14 @@ import { ProgressService } from './services/progress.service';
 
       <!-- Matching Game Screen -->
       <app-matching-game
-        *ngIf="currentView === 'game'"
+        *ngIf="currentView === 'game' && isAuthenticated"
         [playerName]="currentPlayer"
         (backToHome)="goHome()">
       </app-matching-game>
 
       <!-- Book Tracker Screen -->
       <app-book-tracker
-        *ngIf="currentView === 'books'"
+        *ngIf="currentView === 'books' && isAuthenticated"
         [playerName]="currentPlayer"
         (backToHome)="goHome()">
       </app-book-tracker>
@@ -471,6 +475,7 @@ export class AppComponent implements OnInit {
   currentLanguage: 'en' | 'pl' = 'en';
   currentView: 'home' | 'game' | 'books' = 'home';
   currentPlayer: string = 'ANIA';
+  isAuthenticated: boolean = false;
 
   aniaWordsLearned: number = 0;
   michalWordsLearned: number = 0;
@@ -483,10 +488,17 @@ export class AppComponent implements OnInit {
 
   constructor(
     public translationService: TranslationService,
-    private progressService: ProgressService
+    private progressService: ProgressService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    // Check authentication state
+    this.isAuthenticated = this.authService.isAuthenticated();
+    this.authService.isAuthenticated$.subscribe(isAuth => {
+      this.isAuthenticated = isAuth;
+    });
+
     this.currentLanguage = this.translationService.getCurrentLanguage();
     this.translationService.currentLanguage$.subscribe(lang => {
       this.currentLanguage = lang;

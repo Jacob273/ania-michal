@@ -197,6 +197,46 @@ export class TranslationService {
     'enter_author': {
       en: 'Enter author name',
       pl: 'Wpisz nazwisko autora'
+    },
+    'app_title': {
+      en: 'Ania & Michał',
+      pl: 'Ania i Michał'
+    },
+    'learning_adventure': {
+      en: 'Learning Adventure',
+      pl: 'Przygoda z Nauką'
+    },
+    'enter_password': {
+      en: 'Enter Password',
+      pl: 'Wprowadź Hasło'
+    },
+    'password_instruction': {
+      en: 'Please enter the password to continue',
+      pl: 'Proszę wprowadzić hasło, aby kontynuować'
+    },
+    'enter_password_placeholder': {
+      en: 'Enter password',
+      pl: 'Wpisz hasło'
+    },
+    'unlock': {
+      en: 'Unlock',
+      pl: 'Odblokuj'
+    },
+    'incorrect_password': {
+      en: 'Incorrect password. Please try again.',
+      pl: 'Nieprawidłowe hasło. Spróbuj ponownie.'
+    },
+    'book_tracking_feature': {
+      en: 'Book Tracking',
+      pl: 'Śledzenie Książek'
+    },
+    'word_games_feature': {
+      en: 'Word Games',
+      pl: 'Gry Słowne'
+    },
+    'languages_feature': {
+      en: 'English & Polish',
+      pl: 'Angielski i Polski'
     }
   };
 
