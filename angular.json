@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "ania-michal-pralicz": {
+    "aniami": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -40,7 +40,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/ania-michal-pralicz",
+            "outputPath": "dist/aniami",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -91,10 +91,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "ania-michal-pralicz:build:production"
+              "browserTarget": "aniami:build:production"
             },
             "development": {
-              "browserTarget": "ania-michal-pralicz:build:development"
+              "browserTarget": "aniami:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -102,7 +102,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "ania-michal-pralicz:build"
+            "browserTarget": "aniami:build"
           }
         }
       }
