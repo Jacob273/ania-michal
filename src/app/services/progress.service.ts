@@ -117,8 +117,9 @@ export class ProgressService {
   getNextWords(player: 'ANIA' | 'MICHAL', count: number = 8): WordPair[] {
     const progress = this.getProgress(player);
     const words: WordPair[] = [];
+    const updatedProgress = { ...progress };
 
-    // First, add failed words if any
+    // First, add failed words if any (up to count)
     if (progress.failedWords.length > 0) {
       const failedToRetry = progress.failedWords.slice(0, count);
       failedToRetry.forEach(shuffledIndex => {
@@ -127,20 +128,26 @@ export class ProgressService {
       });
 
       // Remove these from failed list
-      const updatedProgress = { ...progress };
       updatedProgress.failedWords = progress.failedWords.filter(idx => !failedToRetry.includes(idx));
-      this.updateProgress(player, updatedProgress);
-
-      return words;
     }
 
-    // Otherwise, get next words from current index using shuffled order
+    // If we still need more words to reach count, add new words from current index
     let currentIdx = progress.currentWordIndex;
-    for (let i = 0; i < count && currentIdx < progress.shuffledIndices.length; i++) {
+    const newWordsAdded = Math.min(count - words.length, progress.shuffledIndices.length - currentIdx);
+
+    for (let i = 0; i < newWordsAdded; i++) {
       const shuffledIndex = progress.shuffledIndices[currentIdx];
       words.push(this.allWordPairs[shuffledIndex]);
       currentIdx++;
     }
+
+    // Update current index to reflect new words shown
+    if (newWordsAdded > 0) {
+      updatedProgress.currentWordIndex = currentIdx;
+    }
+
+    // Save updated progress
+    this.updateProgress(player, updatedProgress);
 
     return words;
   }
@@ -166,18 +173,9 @@ export class ProgressService {
   }
 
   completeRound(player: 'ANIA' | 'MICHAL', wordsInRound: number = 8): void {
-    const progress = this.getProgress(player);
-    const updatedProgress = { ...progress };
-
-    // Move to next set of words (only if not retrying failed words)
-    if (progress.failedWords.length === 0) {
-      updatedProgress.currentWordIndex = Math.min(
-        progress.currentWordIndex + wordsInRound,
-        progress.shuffledIndices.length
-      );
-    }
-
-    this.updateProgress(player, updatedProgress);
+    // Round completion logic
+    // Note: currentWordIndex is already advanced in getNextWords when new words are shown
+    // This method can be used for any round completion tasks like awarding bonuses, etc.
   }
 
   private updateProgress(player: 'ANIA' | 'MICHAL', progress: PlayerProgress): void {
