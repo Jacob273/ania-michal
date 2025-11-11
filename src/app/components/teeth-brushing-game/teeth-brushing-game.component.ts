@@ -24,8 +24,11 @@ interface Tooth {
         <p class="game-instruction" *ngIf="gameState === 'brushing'">
           {{ translate('brush_teeth_instruction') }}
         </p>
-        <p class="game-instruction warning" *ngIf="gameState === 'need-rinse'">
-          {{ translate('rinse_brush') }}
+        <p class="game-instruction warning" *ngIf="gameState === 'need-rinse' && !tapRunning">
+          {{ translate('rinse_brush') }} - {{ translate('click_tap_to_start') }}
+        </p>
+        <p class="game-instruction warning" *ngIf="gameState === 'need-rinse' && tapRunning">
+          {{ translate('drag_brush_to_water') }} 💧
         </p>
       </div>
 
@@ -103,6 +106,7 @@ interface Tooth {
                [class.dirty-brush]="brushCleanliness < 30"
                [class.can-brush]="gameState === 'brushing'"
                [class.need-rinse]="gameState === 'need-rinse'"
+               [class.rinsing]="isRinsing"
                [class.dragging]="isDraggingBrush"
                [style.left.px]="isDraggingBrush ? brushX : null"
                [style.top.px]="isDraggingBrush ? brushY : null"
@@ -485,6 +489,11 @@ interface Tooth {
       animation: shake 0.5s infinite;
     }
 
+    .toothbrush.rinsing {
+      filter: brightness(1.2) saturate(1.3);
+      animation: cleaning 0.3s ease infinite;
+    }
+
     @keyframes bounce-hint {
       0%, 100% { transform: translateX(-50%) translateY(0); }
       50% { transform: translateX(-50%) translateY(-10px); }
@@ -494,6 +503,11 @@ interface Tooth {
       0%, 100% { transform: translateX(-50%) rotate(0deg); }
       25% { transform: translateX(-50%) rotate(-5deg); }
       75% { transform: translateX(-50%) rotate(5deg); }
+    }
+
+    @keyframes cleaning {
+      0%, 100% { transform: rotate(-2deg) scale(1); }
+      50% { transform: rotate(2deg) scale(1.05); }
     }
 
     .water-tap {
@@ -641,6 +655,7 @@ export class TeethBrushingGameComponent implements OnInit {
 
   tapRunning: boolean = false;
   gameComplete: boolean = false;
+  isRinsing: boolean = false; // Track if brush is actively being rinsed
 
   isDraggingBrush: boolean = false;
   dragOffsetX: number = 0;
@@ -882,13 +897,17 @@ export class TeethBrushingGameComponent implements OnInit {
 
     // Increased proximity range for easier cleaning
     if (distance < 150) {
+      this.isRinsing = true;
       // Rinse brush faster for better feedback
       this.brushCleanliness += 15;
       if (this.brushCleanliness >= 100) {
         this.brushCleanliness = 100;
         this.gameState = 'brushing';
         this.tapRunning = false;
+        this.isRinsing = false;
       }
+    } else {
+      this.isRinsing = false;
     }
   }
 
@@ -907,6 +926,7 @@ export class TeethBrushingGameComponent implements OnInit {
     this.brushCleanliness = 100;
     this.teethCleanedSinceRinse = 0;
     this.tapRunning = false;
+    this.isRinsing = false;
     this.isDraggingBrush = false;
     this.initializeTeeth();
   }
