@@ -299,6 +299,7 @@ export class MatchingGameComponent implements OnInit {
 
   wordPairs: WordPair[] = [];
   currentStartIndex: number = 0;
+  wordsPerRound: number = 8;
 
   constructor(
     public translationService: TranslationService,
@@ -314,7 +315,7 @@ export class MatchingGameComponent implements OnInit {
     const progress = this.progressService.getProgress(player);
     this.currentStartIndex = progress.currentWordIndex;
 
-    this.wordPairs = this.progressService.getNextWords(player);
+    this.wordPairs = this.progressService.getNextWords(player, this.wordsPerRound);
     this.initializeGame();
   }
 
@@ -385,7 +386,7 @@ export class MatchingGameComponent implements OnInit {
         // Check if all matched
         if (this.englishWords.every(w => w.matched)) {
           setTimeout(() => {
-            this.progressService.completeRound(player);
+            this.progressService.completeRound(player, this.wordsPerRound);
             this.isComplete = true;
             this.isProcessing = false;
           }, 1000);

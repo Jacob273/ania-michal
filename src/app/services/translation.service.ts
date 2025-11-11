@@ -297,6 +297,22 @@ export class TranslationService {
     'words_learned': {
       en: 'Words Learned',
       pl: 'Wyuczonych Słów'
+    },
+    'start_new_round': {
+      en: 'Start New Round',
+      pl: 'Rozpocznij Nową Rundę'
+    },
+    'round_complete': {
+      en: 'Round Complete!',
+      pl: 'Runda Ukończona!'
+    },
+    'words_mastered': {
+      en: 'Words Mastered',
+      pl: 'Opanowanych Słów'
+    },
+    'keep_learning': {
+      en: 'Keep Learning!',
+      pl: 'Kontynuuj Naukę!'
     }
   };
 
