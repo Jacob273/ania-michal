@@ -60,6 +60,14 @@ export class ProgressService {
       if (!progress.shuffledIndices || progress.shuffledIndices.length === 0) {
         progress.shuffledIndices = this.createShuffledIndices();
       }
+      // IMPORTANT: Check if word database has grown (e.g., from 100 to 2000 words)
+      // If shuffledIndices is shorter than total words, regenerate to include new words
+      if (progress.shuffledIndices.length < this.allWordPairs.length) {
+        // Reset to start from beginning with new expanded word set
+        progress.shuffledIndices = this.createShuffledIndices();
+        progress.currentWordIndex = 0;
+        // Keep wordsLearned counter - user doesn't lose progress!
+      }
       // Initialize learnedWordIds if not present (backward compatibility)
       if (!progress.learnedWordIds) {
         progress.learnedWordIds = [];
@@ -77,6 +85,14 @@ export class ProgressService {
       // Initialize shuffled indices if not present
       if (!progress.shuffledIndices || progress.shuffledIndices.length === 0) {
         progress.shuffledIndices = this.createShuffledIndices();
+      }
+      // IMPORTANT: Check if word database has grown (e.g., from 100 to 2000 words)
+      // If shuffledIndices is shorter than total words, regenerate to include new words
+      if (progress.shuffledIndices.length < this.allWordPairs.length) {
+        // Reset to start from beginning with new expanded word set
+        progress.shuffledIndices = this.createShuffledIndices();
+        progress.currentWordIndex = 0;
+        // Keep wordsLearned counter - user doesn't lose progress!
       }
       // Initialize learnedWordIds if not present (backward compatibility)
       if (!progress.learnedWordIds) {
