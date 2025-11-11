@@ -313,6 +313,58 @@ export class TranslationService {
     'keep_learning': {
       en: 'Keep Learning!',
       pl: 'Kontynuuj Naukę!'
+    },
+    'brush_your_teeth': {
+      en: 'Brush Your Teeth',
+      pl: 'Umyj Zęby'
+    },
+    'teeth_brushed': {
+      en: 'Teeth Brushed',
+      pl: 'Umyte Zęby'
+    },
+    'squeeze_toothpaste': {
+      en: 'Squeeze toothpaste onto the brush!',
+      pl: 'Wyciśnij pastę na szczoteczkę!'
+    },
+    'brush_teeth_instruction': {
+      en: 'Scrub each tooth to clean it!',
+      pl: 'Przetrzyj każdy ząb, aby go wyczyścić!'
+    },
+    'rinse_brush': {
+      en: 'Brush is dirty! Rinse it under the tap!',
+      pl: 'Szczoteczka jest brudna! Spłucz ją pod kranem!'
+    },
+    'all_teeth_clean': {
+      en: 'All teeth are sparkling clean!',
+      pl: 'Wszystkie zęby są lśniąco czyste!'
+    },
+    'teeth_cleaned': {
+      en: 'Teeth Cleaned',
+      pl: 'Zęby Wyczyszczone'
+    },
+    'brush_again': {
+      en: 'Brush Again',
+      pl: 'Umyj Ponownie'
+    },
+    'top_teeth': {
+      en: 'Top Teeth',
+      pl: 'Górne Zęby'
+    },
+    'bottom_teeth': {
+      en: 'Bottom Teeth',
+      pl: 'Dolne Zęby'
+    },
+    'brush_cleanliness': {
+      en: 'Brush Clean',
+      pl: 'Czystość Szczoteczki'
+    },
+    'eating_vegetables_game': {
+      en: 'Shooting Vegetables with Crossbow',
+      pl: 'Strzelanie do Warzyw z Kuszy'
+    },
+    'play_vegetable_game': {
+      en: 'Play Vegetable Game',
+      pl: 'Zagraj w Grę Warzywną'
     }
   };
 

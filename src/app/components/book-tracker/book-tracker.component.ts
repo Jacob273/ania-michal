@@ -115,7 +115,7 @@ import { TranslationService } from '../../services/translation.service';
       min-height: 100vh;
       padding: 20px;
       box-sizing: border-box;
-      font-family: 'Comic Sans MS', cursive;
+      font-family: 'Quicksand', sans-serif;
     }
 
     .ania-theme {
@@ -136,7 +136,7 @@ import { TranslationService } from '../../services/translation.service';
       cursor: pointer;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
       transition: all 0.3s ease;
-      font-family: 'Comic Sans MS', cursive;
+      font-family: 'Quicksand', sans-serif;
       margin-bottom: 20px;
     }
 
@@ -169,7 +169,7 @@ import { TranslationService } from '../../services/translation.service';
       cursor: pointer;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
       transition: all 0.3s ease;
-      font-family: 'Comic Sans MS', cursive;
+      font-family: 'Quicksand', sans-serif;
     }
 
     .add-book-button:hover {
@@ -295,7 +295,7 @@ import { TranslationService } from '../../services/translation.service';
       font-weight: bold;
       cursor: pointer;
       transition: all 0.3s ease;
-      font-family: 'Comic Sans MS', cursive;
+      font-family: 'Quicksand', sans-serif;
     }
 
     .complete-btn:hover {
@@ -373,7 +373,7 @@ import { TranslationService } from '../../services/translation.service';
       border: 2px solid #ddd;
       border-radius: 10px;
       font-size: 16px;
-      font-family: 'Comic Sans MS', cursive;
+      font-family: 'Quicksand', sans-serif;
       box-sizing: border-box;
     }
 
@@ -412,7 +412,7 @@ import { TranslationService } from '../../services/translation.service';
       font-weight: bold;
       cursor: pointer;
       transition: all 0.3s ease;
-      font-family: 'Comic Sans MS', cursive;
+      font-family: 'Quicksand', sans-serif;
     }
 
     .cancel-btn {

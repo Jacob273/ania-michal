@@ -8,6 +8,8 @@ import { BookTrackerComponent } from './components/book-tracker/book-tracker.com
 import { LoginComponent } from './components/login/login.component';
 import { CleaningGameComponent } from './components/cleaning-game/cleaning-game.component';
 import { BedtimeGameComponent } from './components/bedtime-game/bedtime-game.component';
+import { TeethBrushingGameComponent } from './components/teeth-brushing-game/teeth-brushing-game.component';
+import { VegetableGameComponent } from './components/vegetable-game/vegetable-game.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +18,9 @@ import { BedtimeGameComponent } from './components/bedtime-game/bedtime-game.com
     BookTrackerComponent,
     LoginComponent,
     CleaningGameComponent,
-    BedtimeGameComponent
+    BedtimeGameComponent,
+    TeethBrushingGameComponent,
+    VegetableGameComponent
   ],
   imports: [
     BrowserModule,

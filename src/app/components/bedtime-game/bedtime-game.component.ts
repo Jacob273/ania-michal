@@ -69,7 +69,7 @@ interface FallingStar {
       min-height: 100vh;
       padding: 20px;
       box-sizing: border-box;
-      font-family: 'Comic Sans MS', cursive;
+      font-family: 'Quicksand', sans-serif;
       position: relative;
       overflow: hidden;
     }
@@ -92,7 +92,7 @@ interface FallingStar {
       cursor: pointer;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
       transition: all 0.3s ease;
-      font-family: 'Comic Sans MS', cursive;
+      font-family: 'Quicksand', sans-serif;
       margin-bottom: 20px;
       z-index: 100;
       position: relative;
@@ -352,7 +352,7 @@ interface FallingStar {
       font-weight: bold;
       cursor: pointer;
       transition: all 0.3s ease;
-      font-family: 'Comic Sans MS', cursive;
+      font-family: 'Quicksand', sans-serif;
     }
 
     .play-again-btn {

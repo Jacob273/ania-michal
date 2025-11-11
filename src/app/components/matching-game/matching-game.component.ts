@@ -79,7 +79,7 @@ interface GameWord {
       flex-direction: column;
       padding: 20px;
       box-sizing: border-box;
-      font-family: 'Comic Sans MS', cursive;
+      font-family: 'Quicksand', sans-serif;
       position: relative;
     }
 
@@ -104,7 +104,7 @@ interface GameWord {
       cursor: pointer;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
       transition: all 0.3s ease;
-      font-family: 'Comic Sans MS', cursive;
+      font-family: 'Quicksand', sans-serif;
     }
 
     .back-button:hover {
@@ -236,7 +236,7 @@ interface GameWord {
       cursor: pointer;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
       transition: all 0.3s ease;
-      font-family: 'Comic Sans MS', cursive;
+      font-family: 'Quicksand', sans-serif;
       margin-top: 20px;
     }
 

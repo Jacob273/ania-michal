@@ -73,7 +73,7 @@ interface CleaningItem {
       min-height: 100vh;
       padding: 20px;
       box-sizing: border-box;
-      font-family: 'Comic Sans MS', cursive;
+      font-family: 'Quicksand', sans-serif;
       position: relative;
     }
 
@@ -95,7 +95,7 @@ interface CleaningItem {
       cursor: pointer;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
       transition: all 0.3s ease;
-      font-family: 'Comic Sans MS', cursive;
+      font-family: 'Quicksand', sans-serif;
       margin-bottom: 20px;
     }
 
@@ -296,7 +296,7 @@ interface CleaningItem {
       font-weight: bold;
       cursor: pointer;
       transition: all 0.3s ease;
-      font-family: 'Comic Sans MS', cursive;
+      font-family: 'Quicksand', sans-serif;
     }
 
     .play-again-btn {

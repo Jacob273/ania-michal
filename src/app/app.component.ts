@@ -4,6 +4,7 @@ import { ProgressService } from './services/progress.service';
 import { AuthService } from './services/auth.service';
 import { RoomCleaningService } from './services/room-cleaning.service';
 import { BedtimeService } from './services/bedtime.service';
+import { TeethBrushingService } from './services/teeth-brushing.service';
 
 @Component({
   selector: 'app-root',
@@ -52,8 +53,8 @@ import { BedtimeService } from './services/bedtime.service';
                   <li (click)="showCleaningImage('ANIA')" class="clickable-item">{{ translate('cleaning_room') }}</li>
                   <li>{{ translate('doing_homework') }}</li>
                   <li (click)="showBedtimeImage('ANIA')" class="clickable-item">{{ translate('going_to_bed_early') }}</li>
-                  <li>{{ translate('eating_vegetables') }}</li>
-                  <li>{{ translate('brushing_teeth') }}</li>
+                  <li (click)="showVegetablesImage('ANIA')" class="clickable-item">{{ translate('eating_vegetables') }}</li>
+                  <li (click)="showTeethBrushingImage('ANIA')" class="clickable-item">{{ translate('brushing_teeth') }}</li>
                 </ul>
               </div>
             </div>
@@ -75,6 +76,10 @@ import { BedtimeService } from './services/bedtime.service';
             <div class="progress-box">
               <div class="progress-label">{{ translate('bedtimes_completed') }} 🌙</div>
               <div class="progress-value">{{ aniaBedtimesCompleted }}</div>
+            </div>
+            <div class="progress-box">
+              <div class="progress-label">{{ translate('teeth_brushed') }} 🦷</div>
+              <div class="progress-value">{{ aniaTeethBrushed }}</div>
             </div>
           </div>
         </div>
@@ -111,8 +116,8 @@ import { BedtimeService } from './services/bedtime.service';
                   <li (click)="showCleaningImage('MICHAL')" class="clickable-item">{{ translate('cleaning_room') }}</li>
                   <li>{{ translate('doing_homework') }}</li>
                   <li (click)="showBedtimeImage('MICHAL')" class="clickable-item">{{ translate('going_to_bed_early') }}</li>
-                  <li>{{ translate('eating_vegetables') }}</li>
-                  <li>{{ translate('brushing_teeth') }}</li>
+                  <li (click)="showVegetablesImage('MICHAL')" class="clickable-item">{{ translate('eating_vegetables') }}</li>
+                  <li (click)="showTeethBrushingImage('MICHAL')" class="clickable-item">{{ translate('brushing_teeth') }}</li>
                 </ul>
               </div>
             </div>
@@ -134,6 +139,10 @@ import { BedtimeService } from './services/bedtime.service';
             <div class="progress-box">
               <div class="progress-label">{{ translate('bedtimes_completed') }} 🌙</div>
               <div class="progress-value">{{ michalBedtimesCompleted }}</div>
+            </div>
+            <div class="progress-box">
+              <div class="progress-label">{{ translate('teeth_brushed') }} 🦷</div>
+              <div class="progress-value">{{ michalTeethBrushed }}</div>
             </div>
           </div>
         </div>
@@ -169,6 +178,21 @@ import { BedtimeService } from './services/bedtime.service';
         (bedtimeCompleted)="onBedtimeCompleted()">
       </app-bedtime-game>
 
+      <!-- Teeth Brushing Game Screen -->
+      <app-teeth-brushing-game
+        *ngIf="currentView === 'teeth' && isAuthenticated"
+        [playerName]="currentPlayer"
+        (backToHome)="goHome()"
+        (teethBrushed)="onTeethBrushed()">
+      </app-teeth-brushing-game>
+
+      <!-- Vegetable Game Screen -->
+      <app-vegetable-game
+        *ngIf="currentView === 'vegetables' && isAuthenticated"
+        [playerName]="currentPlayer"
+        (backToHome)="goHome()">
+      </app-vegetable-game>
+
       <!-- Cleaning Room Image Modal -->
       <div class="image-modal-overlay" *ngIf="showCleaningModal" (click)="closeCleaningModal()">
         <div class="image-modal-content"
@@ -198,6 +222,36 @@ import { BedtimeService } from './services/bedtime.service';
           </button>
         </div>
       </div>
+
+      <!-- Teeth Brushing Image Modal -->
+      <div class="image-modal-overlay" *ngIf="showTeethModal" (click)="closeTeethModal()">
+        <div class="image-modal-content teeth-modal"
+             [class.ania-modal]="teethPlayer === 'ANIA'"
+             [class.michal-modal]="teethPlayer === 'MICHAL'"
+             (click)="$event.stopPropagation()">
+          <button class="modal-close-btn" (click)="closeTeethModal()">×</button>
+          <img [src]="getTeethImage()" [alt]="translate('brushing_teeth')" class="cleaning-image">
+          <h2 class="modal-title">{{ translate('brushing_teeth') }} 🦷</h2>
+          <button class="teeth-btn" (click)="startTeethBrushingGame()">
+            {{ translate('brush_your_teeth') }} 🪥
+          </button>
+        </div>
+      </div>
+
+      <!-- Vegetables Image Modal -->
+      <div class="image-modal-overlay" *ngIf="showVegetablesModal" (click)="closeVegetablesModal()">
+        <div class="image-modal-content vegetables-modal"
+             [class.ania-modal]="vegetablesPlayer === 'ANIA'"
+             [class.michal-modal]="vegetablesPlayer === 'MICHAL'"
+             (click)="$event.stopPropagation()">
+          <button class="modal-close-btn" (click)="closeVegetablesModal()">×</button>
+          <img [src]="getVegetablesImage()" [alt]="translate('eating_vegetables')" class="cleaning-image">
+          <h2 class="modal-title">{{ translate('eating_vegetables') }} 🥦</h2>
+          <button class="vegetables-btn" (click)="startVegetablesGame()">
+            {{ translate('play_vegetable_game') }} 🏹
+          </button>
+        </div>
+      </div>
     </div>
   `,
   styles: [`
@@ -206,7 +260,7 @@ import { BedtimeService } from './services/bedtime.service';
       height: 100vh;
       margin: 0;
       padding: 0;
-      font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', cursive, sans-serif;
+      font-family: 'Quicksand', sans-serif;
     }
 
     .section {
@@ -510,7 +564,7 @@ import { BedtimeService } from './services/bedtime.service';
       padding: 15px 30px;
       font-size: 20px;
       font-weight: bold;
-      font-family: 'Comic Sans MS', cursive;
+      font-family: 'Quicksand', sans-serif;
       color: #333;
       cursor: pointer;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
@@ -633,7 +687,7 @@ import { BedtimeService } from './services/bedtime.service';
       color: #333;
       font-size: 32px;
       margin: 0 0 25px 0;
-      font-family: 'Comic Sans MS', cursive;
+      font-family: 'Quicksand', sans-serif;
     }
 
     .clean-room-btn {
@@ -647,7 +701,7 @@ import { BedtimeService } from './services/bedtime.service';
       font-weight: bold;
       cursor: pointer;
       transition: all 0.3s ease;
-      font-family: 'Comic Sans MS', cursive;
+      font-family: 'Quicksand', sans-serif;
       box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
     }
 
@@ -671,7 +725,7 @@ import { BedtimeService } from './services/bedtime.service';
       font-weight: bold;
       cursor: pointer;
       transition: all 0.3s ease;
-      font-family: 'Comic Sans MS', cursive;
+      font-family: 'Quicksand', sans-serif;
       box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
     }
 
@@ -684,12 +738,62 @@ import { BedtimeService } from './services/bedtime.service';
     .bedtime-btn:active {
       transform: translateY(0);
     }
+
+    .teeth-btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, #00bcd4 0%, #0097a7 100%);
+      color: white;
+      border: 2px solid white;
+      border-radius: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Quicksand', sans-serif;
+      box-shadow: 0 6px 20px rgba(0, 188, 212, 0.4);
+    }
+
+    .teeth-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0, 188, 212, 0.6);
+      background: linear-gradient(135deg, #0097a7 0%, #00bcd4 100%);
+    }
+
+    .teeth-btn:active {
+      transform: translateY(0);
+    }
+
+    .vegetables-btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+      color: white;
+      border: 2px solid white;
+      border-radius: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Quicksand', sans-serif;
+      box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+    }
+
+    .vegetables-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(76, 175, 80, 0.6);
+      background: linear-gradient(135deg, #45a049 0%, #4CAF50 100%);
+    }
+
+    .vegetables-btn:active {
+      transform: translateY(0);
+    }
   `]
 })
 export class AppComponent implements OnInit {
   title = 'Ania & Michal';
   currentLanguage: 'en' | 'pl' = 'en';
-  currentView: 'home' | 'game' | 'books' | 'cleaning' | 'bedtime' = 'home';
+  currentView: 'home' | 'game' | 'books' | 'cleaning' | 'bedtime' | 'teeth' | 'vegetables' = 'home';
   currentPlayer: string = 'ANIA';
   isAuthenticated: boolean = false;
 
@@ -703,6 +807,9 @@ export class AppComponent implements OnInit {
   aniaBedtimesCompleted: number = 0;
   michalBedtimesCompleted: number = 0;
 
+  aniaTeethBrushed: number = 0;
+  michalTeethBrushed: number = 0;
+
   aniaShowFavorites: boolean = true;
   michalShowFavorites: boolean = true;
   aniaListAnimating: boolean = false;
@@ -714,12 +821,19 @@ export class AppComponent implements OnInit {
   showBedtimeModal: boolean = false;
   bedtimePlayer: 'ANIA' | 'MICHAL' = 'ANIA';
 
+  showTeethModal: boolean = false;
+  teethPlayer: 'ANIA' | 'MICHAL' = 'ANIA';
+
+  showVegetablesModal: boolean = false;
+  vegetablesPlayer: 'ANIA' | 'MICHAL' = 'ANIA';
+
   constructor(
     public translationService: TranslationService,
     private progressService: ProgressService,
     private authService: AuthService,
     private roomCleaningService: RoomCleaningService,
-    private bedtimeService: BedtimeService
+    private bedtimeService: BedtimeService,
+    private teethBrushingService: TeethBrushingService
   ) {}
 
   ngOnInit(): void {
@@ -763,6 +877,15 @@ export class AppComponent implements OnInit {
 
     this.bedtimeService.michalBedtimes$.subscribe(stats => {
       this.michalBedtimesCompleted = stats.bedtimesCompleted;
+    });
+
+    // Subscribe to teeth brushing stats
+    this.teethBrushingService.aniaTeeth$.subscribe(stats => {
+      this.aniaTeethBrushed = stats.teethBrushed;
+    });
+
+    this.teethBrushingService.michalTeeth$.subscribe(stats => {
+      this.michalTeethBrushed = stats.teethBrushed;
     });
   }
 
@@ -858,5 +981,56 @@ export class AppComponent implements OnInit {
   onBedtimeCompleted(): void {
     const player = this.currentPlayer as 'ANIA' | 'MICHAL';
     this.bedtimeService.incrementBedtimes(player);
+  }
+
+  showTeethBrushingImage(player: 'ANIA' | 'MICHAL'): void {
+    this.teethPlayer = player;
+    this.showTeethModal = true;
+  }
+
+  closeTeethModal(): void {
+    this.showTeethModal = false;
+  }
+
+  getTeethImage(): string {
+    if (this.teethPlayer === 'ANIA') {
+      return 'assets/img/10yr_old_girl_brushing_teeth.png';
+    } else {
+      return 'assets/img/10yr_old_boy_brushing_teeth.png';
+    }
+  }
+
+  startTeethBrushingGame(): void {
+    this.currentPlayer = this.teethPlayer;
+    this.showTeethModal = false;
+    this.currentView = 'teeth';
+  }
+
+  onTeethBrushed(): void {
+    const player = this.currentPlayer as 'ANIA' | 'MICHAL';
+    this.teethBrushingService.incrementTeethBrushed(player);
+  }
+
+  showVegetablesImage(player: 'ANIA' | 'MICHAL'): void {
+    this.vegetablesPlayer = player;
+    this.showVegetablesModal = true;
+  }
+
+  closeVegetablesModal(): void {
+    this.showVegetablesModal = false;
+  }
+
+  getVegetablesImage(): string {
+    if (this.vegetablesPlayer === 'ANIA') {
+      return 'assets/img/10yr_old_girl_broccoli.png';
+    } else {
+      return 'assets/img/10yr_old_boy_broccoli.png';
+    }
+  }
+
+  startVegetablesGame(): void {
+    this.currentPlayer = this.vegetablesPlayer;
+    this.showVegetablesModal = false;
+    this.currentView = 'vegetables';
   }
 }
