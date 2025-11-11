@@ -76,8 +76,9 @@ import { TranslationService } from '../../services/translation.service';
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       font-family: 'Comic Sans MS', cursive;
       position: relative;
-      overflow: hidden;
-      padding: 20px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 40px 20px;
     }
 
     .stars {
