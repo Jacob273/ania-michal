@@ -29,11 +29,15 @@ interface CleaningItem {
         <div *ngFor="let item of items"
              class="cleaning-item"
              [class.collected]="item.collected"
+             [class.dragging]="item.id === touchedItemId"
              [style.left.%]="item.left"
              [style.top.%]="item.top"
              draggable="true"
              (dragstart)="onDragStart($event, item)"
-             (dragend)="onDragEnd($event)">
+             (dragend)="onDragEnd($event)"
+             (touchstart)="onTouchStart($event, item)"
+             (touchmove)="onTouchMove($event, item)"
+             (touchend)="onTouchEnd($event, item)">
           <span class="item-emoji">{{ item.emoji }}</span>
         </div>
 
@@ -144,10 +148,21 @@ interface CleaningItem {
       cursor: grab;
       transition: all 0.3s ease;
       animation: float 3s ease-in-out infinite;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
     .cleaning-item:active {
       cursor: grabbing;
+    }
+
+    .cleaning-item.dragging {
+      opacity: 0.8;
+      transform: scale(1.3);
+      z-index: 1000;
+      animation: none;
+      transition: none;
     }
 
     .cleaning-item.collected {
@@ -308,6 +323,9 @@ export class CleaningGameComponent implements OnInit {
   collectedCount: number = 0;
   gameCompleted: boolean = false;
   draggedItem: CleaningItem | null = null;
+  touchedItemId: number | null = null;
+  gameAreaRect: DOMRect | null = null;
+  initialTouchOffset = { x: 0, y: 0 };
 
   constructor(public translationService: TranslationService) {}
 
@@ -371,6 +389,80 @@ export class CleaningGameComponent implements OnInit {
 
   playAgain(): void {
     this.initializeGame();
+  }
+
+  // Touch event handlers for tablets/touchscreens
+  onTouchStart(event: TouchEvent, item: CleaningItem): void {
+    if (item.collected) return;
+
+    event.preventDefault();
+    this.touchedItemId = item.id;
+
+    const touch = event.touches[0];
+    const target = event.currentTarget as HTMLElement;
+    const rect = target.getBoundingClientRect();
+
+    // Store the offset between touch point and item position
+    this.initialTouchOffset = {
+      x: touch.clientX - rect.left,
+      y: touch.clientY - rect.top
+    };
+
+    // Get game area dimensions
+    const gameArea = document.querySelector('.game-area') as HTMLElement;
+    if (gameArea) {
+      this.gameAreaRect = gameArea.getBoundingClientRect();
+    }
+  }
+
+  onTouchMove(event: TouchEvent, item: CleaningItem): void {
+    if (item.collected || this.touchedItemId !== item.id) return;
+
+    event.preventDefault();
+
+    if (!this.gameAreaRect) return;
+
+    const touch = event.touches[0];
+
+    // Calculate new position relative to game area
+    const newLeft = ((touch.clientX - this.gameAreaRect.left - this.initialTouchOffset.x) / this.gameAreaRect.width) * 100;
+    const newTop = ((touch.clientY - this.gameAreaRect.top - this.initialTouchOffset.y) / this.gameAreaRect.height) * 100;
+
+    // Update item position (constrain within bounds)
+    item.left = Math.max(0, Math.min(90, newLeft));
+    item.top = Math.max(0, Math.min(90, newTop));
+  }
+
+  onTouchEnd(event: TouchEvent, item: CleaningItem): void {
+    if (item.collected || this.touchedItemId !== item.id) return;
+
+    event.preventDefault();
+    this.touchedItemId = null;
+
+    // Check if item was dropped on the collection box
+    const boxElement = document.querySelector('.collection-box') as HTMLElement;
+    if (!boxElement || !this.gameAreaRect) return;
+
+    const boxRect = boxElement.getBoundingClientRect();
+    const touch = event.changedTouches[0];
+
+    // Check collision
+    const touchX = touch.clientX;
+    const touchY = touch.clientY;
+
+    if (touchX >= boxRect.left && touchX <= boxRect.right &&
+        touchY >= boxRect.top && touchY <= boxRect.bottom) {
+      // Item dropped in box
+      item.collected = true;
+      this.collectedCount++;
+
+      if (this.collectedCount === this.items.length) {
+        setTimeout(() => {
+          this.gameCompleted = true;
+          this.roomCleaned.emit();
+        }, 500);
+      }
+    }
   }
 
   goBack(): void {
