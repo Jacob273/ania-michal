@@ -293,6 +293,10 @@ export class TranslationService {
     'play_bedtime_game': {
       en: 'Play Again',
       pl: 'Zagraj Ponownie'
+    },
+    'words_learned': {
+      en: 'Words Learned',
+      pl: 'Wyuczonych Słów'
     }
   };
 

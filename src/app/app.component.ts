@@ -62,7 +62,7 @@ import { BedtimeService } from './services/bedtime.service';
               <div class="score-value">⭐⭐⭐⭐⭐</div>
             </div>
             <div class="progress-box">
-              <div class="progress-label">Words Learned</div>
+              <div class="progress-label">{{ translate('words_learned') }}</div>
               <div class="progress-value">{{ aniaWordsLearned }} / {{ totalWords }}</div>
               <div class="progress-bar">
                 <div class="progress-fill ania-fill" [style.width.%]="(aniaWordsLearned / totalWords) * 100"></div>
@@ -121,7 +121,7 @@ import { BedtimeService } from './services/bedtime.service';
               <div class="score-value">⭐⭐⭐⭐⭐</div>
             </div>
             <div class="progress-box">
-              <div class="progress-label">Words Learned</div>
+              <div class="progress-label">{{ translate('words_learned') }}</div>
               <div class="progress-value">{{ michalWordsLearned }} / {{ totalWords }}</div>
               <div class="progress-bar">
                 <div class="progress-fill michal-fill" [style.width.%]="(michalWordsLearned / totalWords) * 100"></div>
