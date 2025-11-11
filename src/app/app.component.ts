@@ -47,7 +47,7 @@ import { AuthService } from './services/auth.service';
                     [class.fade-out]="aniaListAnimating"
                     [class.fade-in]="!aniaListAnimating"
                     *ngIf="!aniaShowFavorites">
-                  <li>{{ translate('cleaning_room') }}</li>
+                  <li (click)="showCleaningImage('ANIA')" class="clickable-item">{{ translate('cleaning_room') }}</li>
                   <li>{{ translate('doing_homework') }}</li>
                   <li>{{ translate('going_to_bed_early') }}</li>
                   <li>{{ translate('eating_vegetables') }}</li>
@@ -98,7 +98,7 @@ import { AuthService } from './services/auth.service';
                     [class.fade-out]="michalListAnimating"
                     [class.fade-in]="!michalListAnimating"
                     *ngIf="!michalShowFavorites">
-                  <li>{{ translate('cleaning_room') }}</li>
+                  <li (click)="showCleaningImage('MICHAL')" class="clickable-item">{{ translate('cleaning_room') }}</li>
                   <li>{{ translate('doing_homework') }}</li>
                   <li>{{ translate('going_to_bed_early') }}</li>
                   <li>{{ translate('eating_vegetables') }}</li>
@@ -134,6 +134,18 @@ import { AuthService } from './services/auth.service';
         [playerName]="currentPlayer"
         (backToHome)="goHome()">
       </app-book-tracker>
+
+      <!-- Cleaning Room Image Modal -->
+      <div class="image-modal-overlay" *ngIf="showCleaningModal" (click)="closeCleaningModal()">
+        <div class="image-modal-content"
+             [class.ania-modal]="cleaningPlayer === 'ANIA'"
+             [class.michal-modal]="cleaningPlayer === 'MICHAL'"
+             (click)="$event.stopPropagation()">
+          <button class="modal-close-btn" (click)="closeCleaningModal()">×</button>
+          <img [src]="getCleaningImage()" [alt]="translate('cleaning_room')" class="cleaning-image">
+          <h2 class="modal-title">{{ translate('cleaning_room') }} 😫</h2>
+        </div>
+      </div>
     </div>
   `,
   styles: [`
@@ -468,6 +480,109 @@ import { AuthService } from './services/auth.service';
     .flag {
       font-size: 28px;
     }
+
+    .clickable-item {
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .clickable-item:hover {
+      transform: scale(1.05);
+      font-weight: bold;
+    }
+
+    .image-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .image-modal-content {
+      background: white;
+      border-radius: 30px;
+      padding: 40px;
+      max-width: 600px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+      animation: slideUp 0.4s ease;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .ania-modal {
+      border: 5px solid #ff6b9d;
+    }
+
+    .michal-modal {
+      border: 5px solid #4facfe;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 28px;
+      cursor: pointer;
+      line-height: 1;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-close-btn:hover {
+      background: #ff5252;
+      transform: scale(1.2) rotate(90deg);
+    }
+
+    .cleaning-image {
+      max-width: 100%;
+      height: auto;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-title {
+      color: #333;
+      font-size: 32px;
+      margin: 0;
+      font-family: 'Comic Sans MS', cursive;
+    }
   `]
 })
 export class AppComponent implements OnInit {
@@ -485,6 +600,9 @@ export class AppComponent implements OnInit {
   michalShowFavorites: boolean = true;
   aniaListAnimating: boolean = false;
   michalListAnimating: boolean = false;
+
+  showCleaningModal: boolean = false;
+  cleaningPlayer: 'ANIA' | 'MICHAL' = 'ANIA';
 
   constructor(
     public translationService: TranslationService,
@@ -554,5 +672,22 @@ export class AppComponent implements OnInit {
   startBookTracking(player: string): void {
     this.currentPlayer = player;
     this.currentView = 'books';
+  }
+
+  showCleaningImage(player: 'ANIA' | 'MICHAL'): void {
+    this.cleaningPlayer = player;
+    this.showCleaningModal = true;
+  }
+
+  closeCleaningModal(): void {
+    this.showCleaningModal = false;
+  }
+
+  getCleaningImage(): string {
+    if (this.cleaningPlayer === 'ANIA') {
+      return 'assets/img/tired_exhausted-girl.png';
+    } else {
+      return 'assets/img/tired_exhausted-child.png';
+    }
   }
 }
