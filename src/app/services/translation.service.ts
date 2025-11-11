@@ -261,6 +261,38 @@ export class TranslationService {
     'back_to_menu': {
       en: 'Back to Menu',
       pl: 'Powrót do Menu'
+    },
+    'go_to_bed_early': {
+      en: 'Go to Bed Early',
+      pl: 'Idź Spać Wcześnie'
+    },
+    'bedtimes_completed': {
+      en: 'Bedtimes on Time',
+      pl: 'Punktualne Spanie'
+    },
+    'catch_the_stars': {
+      en: 'Catch the Stars',
+      pl: 'Złap Gwiazdki'
+    },
+    'catch_stars_instruction': {
+      en: 'Click on the falling stars!',
+      pl: 'Klikaj w spadające gwiazdki!'
+    },
+    'stars_caught': {
+      en: 'Stars Caught',
+      pl: 'Złapane Gwiazdki'
+    },
+    'sleep_well': {
+      en: 'Sleep Well!',
+      pl: 'Śpij Dobrze!'
+    },
+    'ready_for_bed': {
+      en: 'You caught all the stars! Time for sweet dreams!',
+      pl: 'Złapałeś wszystkie gwiazdki! Czas na słodkie sny!'
+    },
+    'play_bedtime_game': {
+      en: 'Play Again',
+      pl: 'Zagraj Ponownie'
     }
   };
 

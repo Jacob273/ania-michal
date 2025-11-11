@@ -3,6 +3,7 @@ import { TranslationService } from './services/translation.service';
 import { ProgressService } from './services/progress.service';
 import { AuthService } from './services/auth.service';
 import { RoomCleaningService } from './services/room-cleaning.service';
+import { BedtimeService } from './services/bedtime.service';
 
 @Component({
   selector: 'app-root',
@@ -50,7 +51,7 @@ import { RoomCleaningService } from './services/room-cleaning.service';
                     *ngIf="!aniaShowFavorites">
                   <li (click)="showCleaningImage('ANIA')" class="clickable-item">{{ translate('cleaning_room') }}</li>
                   <li>{{ translate('doing_homework') }}</li>
-                  <li>{{ translate('going_to_bed_early') }}</li>
+                  <li (click)="showBedtimeImage('ANIA')" class="clickable-item">{{ translate('going_to_bed_early') }}</li>
                   <li>{{ translate('eating_vegetables') }}</li>
                   <li>{{ translate('brushing_teeth') }}</li>
                 </ul>
@@ -70,6 +71,10 @@ import { RoomCleaningService } from './services/room-cleaning.service';
             <div class="progress-box">
               <div class="progress-label">{{ translate('rooms_cleaned') }} 🧹</div>
               <div class="progress-value">{{ aniaRoomsCleaned }}</div>
+            </div>
+            <div class="progress-box">
+              <div class="progress-label">{{ translate('bedtimes_completed') }} 🌙</div>
+              <div class="progress-value">{{ aniaBedtimesCompleted }}</div>
             </div>
           </div>
         </div>
@@ -105,7 +110,7 @@ import { RoomCleaningService } from './services/room-cleaning.service';
                     *ngIf="!michalShowFavorites">
                   <li (click)="showCleaningImage('MICHAL')" class="clickable-item">{{ translate('cleaning_room') }}</li>
                   <li>{{ translate('doing_homework') }}</li>
-                  <li>{{ translate('going_to_bed_early') }}</li>
+                  <li (click)="showBedtimeImage('MICHAL')" class="clickable-item">{{ translate('going_to_bed_early') }}</li>
                   <li>{{ translate('eating_vegetables') }}</li>
                   <li>{{ translate('brushing_teeth') }}</li>
                 </ul>
@@ -125,6 +130,10 @@ import { RoomCleaningService } from './services/room-cleaning.service';
             <div class="progress-box">
               <div class="progress-label">{{ translate('rooms_cleaned') }} 🧹</div>
               <div class="progress-value">{{ michalRoomsCleaned }}</div>
+            </div>
+            <div class="progress-box">
+              <div class="progress-label">{{ translate('bedtimes_completed') }} 🌙</div>
+              <div class="progress-value">{{ michalBedtimesCompleted }}</div>
             </div>
           </div>
         </div>
@@ -152,6 +161,14 @@ import { RoomCleaningService } from './services/room-cleaning.service';
         (roomCleaned)="onRoomCleaned()">
       </app-cleaning-game>
 
+      <!-- Bedtime Game Screen -->
+      <app-bedtime-game
+        *ngIf="currentView === 'bedtime' && isAuthenticated"
+        [playerName]="currentPlayer"
+        (backToHome)="goHome()"
+        (bedtimeCompleted)="onBedtimeCompleted()">
+      </app-bedtime-game>
+
       <!-- Cleaning Room Image Modal -->
       <div class="image-modal-overlay" *ngIf="showCleaningModal" (click)="closeCleaningModal()">
         <div class="image-modal-content"
@@ -163,6 +180,21 @@ import { RoomCleaningService } from './services/room-cleaning.service';
           <h2 class="modal-title">{{ translate('cleaning_room') }} 😫</h2>
           <button class="clean-room-btn" (click)="startCleaningGame()">
             {{ translate('clean_my_room') }} 🧹
+          </button>
+        </div>
+      </div>
+
+      <!-- Bedtime Image Modal -->
+      <div class="image-modal-overlay" *ngIf="showBedtimeModal" (click)="closeBedtimeModal()">
+        <div class="image-modal-content bedtime-modal"
+             [class.ania-modal]="bedtimePlayer === 'ANIA'"
+             [class.michal-modal]="bedtimePlayer === 'MICHAL'"
+             (click)="$event.stopPropagation()">
+          <button class="modal-close-btn" (click)="closeBedtimeModal()">×</button>
+          <img [src]="getBedtimeImage()" [alt]="translate('going_to_bed_early')" class="cleaning-image">
+          <h2 class="modal-title">{{ translate('going_to_bed_early') }} 😴</h2>
+          <button class="bedtime-btn" (click)="startBedtimeGame()">
+            {{ translate('go_to_bed_early') }} 🌙
           </button>
         </div>
       </div>
@@ -627,12 +659,37 @@ import { RoomCleaningService } from './services/room-cleaning.service';
     .clean-room-btn:active {
       transform: translateY(0);
     }
+
+    .bedtime-btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+      color: #ffd700;
+      border: 2px solid #ffd700;
+      border-radius: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Comic Sans MS', cursive;
+      box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+    }
+
+    .bedtime-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(255, 215, 0, 0.6);
+      background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+    }
+
+    .bedtime-btn:active {
+      transform: translateY(0);
+    }
   `]
 })
 export class AppComponent implements OnInit {
   title = 'Ania & Michal';
   currentLanguage: 'en' | 'pl' = 'en';
-  currentView: 'home' | 'game' | 'books' | 'cleaning' = 'home';
+  currentView: 'home' | 'game' | 'books' | 'cleaning' | 'bedtime' = 'home';
   currentPlayer: string = 'ANIA';
   isAuthenticated: boolean = false;
 
@@ -643,6 +700,9 @@ export class AppComponent implements OnInit {
   aniaRoomsCleaned: number = 0;
   michalRoomsCleaned: number = 0;
 
+  aniaBedtimesCompleted: number = 0;
+  michalBedtimesCompleted: number = 0;
+
   aniaShowFavorites: boolean = true;
   michalShowFavorites: boolean = true;
   aniaListAnimating: boolean = false;
@@ -651,11 +711,15 @@ export class AppComponent implements OnInit {
   showCleaningModal: boolean = false;
   cleaningPlayer: 'ANIA' | 'MICHAL' = 'ANIA';
 
+  showBedtimeModal: boolean = false;
+  bedtimePlayer: 'ANIA' | 'MICHAL' = 'ANIA';
+
   constructor(
     public translationService: TranslationService,
     private progressService: ProgressService,
     private authService: AuthService,
-    private roomCleaningService: RoomCleaningService
+    private roomCleaningService: RoomCleaningService,
+    private bedtimeService: BedtimeService
   ) {}
 
   ngOnInit(): void {
@@ -690,6 +754,15 @@ export class AppComponent implements OnInit {
 
     this.roomCleaningService.michalRooms$.subscribe(stats => {
       this.michalRoomsCleaned = stats.roomsCleaned;
+    });
+
+    // Subscribe to bedtime stats
+    this.bedtimeService.aniaBedtimes$.subscribe(stats => {
+      this.aniaBedtimesCompleted = stats.bedtimesCompleted;
+    });
+
+    this.bedtimeService.michalBedtimes$.subscribe(stats => {
+      this.michalBedtimesCompleted = stats.bedtimesCompleted;
     });
   }
 
@@ -757,5 +830,33 @@ export class AppComponent implements OnInit {
   onRoomCleaned(): void {
     const player = this.currentPlayer as 'ANIA' | 'MICHAL';
     this.roomCleaningService.incrementRoomsCleaned(player);
+  }
+
+  showBedtimeImage(player: 'ANIA' | 'MICHAL'): void {
+    this.bedtimePlayer = player;
+    this.showBedtimeModal = true;
+  }
+
+  closeBedtimeModal(): void {
+    this.showBedtimeModal = false;
+  }
+
+  getBedtimeImage(): string {
+    if (this.bedtimePlayer === 'ANIA') {
+      return 'assets/img/10y_old_girl_laying-on_bed.png';
+    } else {
+      return 'assets/img/10yr_old_boy_laying_on_bed.png';
+    }
+  }
+
+  startBedtimeGame(): void {
+    this.currentPlayer = this.bedtimePlayer;
+    this.showBedtimeModal = false;
+    this.currentView = 'bedtime';
+  }
+
+  onBedtimeCompleted(): void {
+    const player = this.currentPlayer as 'ANIA' | 'MICHAL';
+    this.bedtimeService.incrementBedtimes(player);
   }
 }
