@@ -237,6 +237,30 @@ export class TranslationService {
     'languages_feature': {
       en: 'English & Polish',
       pl: 'Angielski i Polski'
+    },
+    'clean_my_room': {
+      en: 'Clean My Room',
+      pl: 'Posprzątaj Mój Pokój'
+    },
+    'rooms_cleaned': {
+      en: 'Rooms Cleaned',
+      pl: 'Posprzątane Pokoje'
+    },
+    'drag_items': {
+      en: 'Drag items to the box!',
+      pl: 'Przeciągnij przedmioty do pudełka!'
+    },
+    'room_is_clean': {
+      en: 'Your room is sparkling clean!',
+      pl: 'Twój pokój jest lśniąco czysty!'
+    },
+    'clean_again': {
+      en: 'Clean Again',
+      pl: 'Posprzątaj Ponownie'
+    },
+    'back_to_menu': {
+      en: 'Back to Menu',
+      pl: 'Powrót do Menu'
     }
   };
 

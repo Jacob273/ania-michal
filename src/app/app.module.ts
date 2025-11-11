@@ -6,13 +6,15 @@ import { AppComponent } from './app.component';
 import { MatchingGameComponent } from './components/matching-game/matching-game.component';
 import { BookTrackerComponent } from './components/book-tracker/book-tracker.component';
 import { LoginComponent } from './components/login/login.component';
+import { CleaningGameComponent } from './components/cleaning-game/cleaning-game.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MatchingGameComponent,
     BookTrackerComponent,
-    LoginComponent
+    LoginComponent,
+    CleaningGameComponent
   ],
   imports: [
     BrowserModule,

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { TranslationService } from './services/translation.service';
 import { ProgressService } from './services/progress.service';
 import { AuthService } from './services/auth.service';
+import { RoomCleaningService } from './services/room-cleaning.service';
 
 @Component({
   selector: 'app-root',
@@ -66,6 +67,10 @@ import { AuthService } from './services/auth.service';
                 <div class="progress-fill ania-fill" [style.width.%]="(aniaWordsLearned / totalWords) * 100"></div>
               </div>
             </div>
+            <div class="progress-box">
+              <div class="progress-label">{{ translate('rooms_cleaned') }} 🧹</div>
+              <div class="progress-value">{{ aniaRoomsCleaned }}</div>
+            </div>
           </div>
         </div>
 
@@ -117,6 +122,10 @@ import { AuthService } from './services/auth.service';
                 <div class="progress-fill michal-fill" [style.width.%]="(michalWordsLearned / totalWords) * 100"></div>
               </div>
             </div>
+            <div class="progress-box">
+              <div class="progress-label">{{ translate('rooms_cleaned') }} 🧹</div>
+              <div class="progress-value">{{ michalRoomsCleaned }}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -135,6 +144,14 @@ import { AuthService } from './services/auth.service';
         (backToHome)="goHome()">
       </app-book-tracker>
 
+      <!-- Cleaning Game Screen -->
+      <app-cleaning-game
+        *ngIf="currentView === 'cleaning' && isAuthenticated"
+        [playerName]="currentPlayer"
+        (backToHome)="goHome()"
+        (roomCleaned)="onRoomCleaned()">
+      </app-cleaning-game>
+
       <!-- Cleaning Room Image Modal -->
       <div class="image-modal-overlay" *ngIf="showCleaningModal" (click)="closeCleaningModal()">
         <div class="image-modal-content"
@@ -144,6 +161,9 @@ import { AuthService } from './services/auth.service';
           <button class="modal-close-btn" (click)="closeCleaningModal()">×</button>
           <img [src]="getCleaningImage()" [alt]="translate('cleaning_room')" class="cleaning-image">
           <h2 class="modal-title">{{ translate('cleaning_room') }} 😫</h2>
+          <button class="clean-room-btn" (click)="startCleaningGame()">
+            {{ translate('clean_my_room') }} 🧹
+          </button>
         </div>
       </div>
     </div>
@@ -580,21 +600,48 @@ import { AuthService } from './services/auth.service';
     .modal-title {
       color: #333;
       font-size: 32px;
-      margin: 0;
+      margin: 0 0 25px 0;
       font-family: 'Comic Sans MS', cursive;
+    }
+
+    .clean-room-btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+      color: white;
+      border: none;
+      border-radius: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Comic Sans MS', cursive;
+      box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+    }
+
+    .clean-room-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(76, 175, 80, 0.6);
+    }
+
+    .clean-room-btn:active {
+      transform: translateY(0);
     }
   `]
 })
 export class AppComponent implements OnInit {
   title = 'Ania & Michal';
   currentLanguage: 'en' | 'pl' = 'en';
-  currentView: 'home' | 'game' | 'books' = 'home';
+  currentView: 'home' | 'game' | 'books' | 'cleaning' = 'home';
   currentPlayer: string = 'ANIA';
   isAuthenticated: boolean = false;
 
   aniaWordsLearned: number = 0;
   michalWordsLearned: number = 0;
   totalWords: number = 0;
+
+  aniaRoomsCleaned: number = 0;
+  michalRoomsCleaned: number = 0;
 
   aniaShowFavorites: boolean = true;
   michalShowFavorites: boolean = true;
@@ -607,7 +654,8 @@ export class AppComponent implements OnInit {
   constructor(
     public translationService: TranslationService,
     private progressService: ProgressService,
-    private authService: AuthService
+    private authService: AuthService,
+    private roomCleaningService: RoomCleaningService
   ) {}
 
   ngOnInit(): void {
@@ -633,6 +681,15 @@ export class AppComponent implements OnInit {
     // Subscribe to Michal's progress
     this.progressService.michalProgress$.subscribe(progress => {
       this.michalWordsLearned = progress.wordsLearned;
+    });
+
+    // Subscribe to room cleaning stats
+    this.roomCleaningService.aniaRooms$.subscribe(stats => {
+      this.aniaRoomsCleaned = stats.roomsCleaned;
+    });
+
+    this.roomCleaningService.michalRooms$.subscribe(stats => {
+      this.michalRoomsCleaned = stats.roomsCleaned;
     });
   }
 
@@ -689,5 +746,16 @@ export class AppComponent implements OnInit {
     } else {
       return 'assets/img/tired_exhausted-child.png';
     }
+  }
+
+  startCleaningGame(): void {
+    this.currentPlayer = this.cleaningPlayer;
+    this.showCleaningModal = false;
+    this.currentView = 'cleaning';
+  }
+
+  onRoomCleaned(): void {
+    const player = this.currentPlayer as 'ANIA' | 'MICHAL';
+    this.roomCleaningService.incrementRoomsCleaned(player);
   }
 }
