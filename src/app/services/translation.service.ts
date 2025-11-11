@@ -334,6 +334,14 @@ export class TranslationService {
       en: 'Brush is dirty! Rinse it under the tap!',
       pl: 'Szczoteczka jest brudna! Spłucz ją pod kranem!'
     },
+    'click_tap_to_start': {
+      en: 'Click the tap to turn on water',
+      pl: 'Kliknij kran, aby włączyć wodę'
+    },
+    'drag_brush_to_water': {
+      en: 'Drag brush to the water to rinse it',
+      pl: 'Przeciągnij szczoteczkę do wody, aby ją spłukać'
+    },
     'all_teeth_clean': {
       en: 'All teeth are sparkling clean!',
       pl: 'Wszystkie zęby są lśniąco czyste!'
