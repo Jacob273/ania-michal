@@ -668,6 +668,10 @@ export class TeethBrushingGameComponent implements OnInit {
   }
 
   initializeTeeth(): void {
+    // Clear existing teeth arrays
+    this.topTeeth = [];
+    this.bottomTeeth = [];
+
     // Create 14 top teeth
     for (let i = 0; i < 14; i++) {
       this.topTeeth.push({

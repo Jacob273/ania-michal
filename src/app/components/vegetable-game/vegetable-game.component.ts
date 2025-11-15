@@ -470,15 +470,54 @@ interface Crossbow {
       -webkit-user-select: none;
       -moz-user-select: none;
       -ms-user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .arrow:hover {
+    .arrow:hover:not(.destroying) {
       filter: drop-shadow(0 0 10px rgba(255, 0, 0, 1));
-      transform: scale(1.2);
     }
 
-    .arrow:active {
+    .arrow:active:not(.destroying) {
       filter: drop-shadow(0 0 15px rgba(255, 100, 0, 1));
+    }
+
+    .arrow.destroying {
+      pointer-events: none;
+      animation: arrow-burn 0.4s ease-out forwards;
+    }
+
+    .arrow-icon {
+      position: relative;
+      z-index: 1;
+    }
+
+    .arrow.destroying .arrow-icon {
+      filter: brightness(0.3);
+    }
+
+    .arrow-fire {
+      position: absolute;
+      font-size: 35px;
+      z-index: 2;
+      animation: burn 0.3s ease-out infinite;
+    }
+
+    @keyframes arrow-burn {
+      0% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.3) rotate(10deg);
+        filter: drop-shadow(0 0 20px rgba(255, 100, 0, 1));
+      }
+      100% {
+        transform: scale(0.5) rotate(20deg);
+        opacity: 0;
+        filter: drop-shadow(0 0 30px rgba(255, 100, 0, 0.5));
+      }
     }
 
     .floating-vegetable {
@@ -966,10 +1005,19 @@ export class VegetableGameComponent implements OnInit, OnDestroy {
   }
 
   destroyArrow(arrow: Arrow): void {
-    const index = this.arrows.findIndex(a => a.id === arrow.id);
-    if (index !== -1) {
-      this.arrows.splice(index, 1);
-    }
+    if (arrow.destroying) return; // Already being destroyed
+
+    // Mark as destroying and add burning effect
+    arrow.destroying = true;
+    arrow.active = false; // Stop movement
+
+    // Remove after burn animation
+    setTimeout(() => {
+      const index = this.arrows.findIndex(a => a.id === arrow.id);
+      if (index !== -1) {
+        this.arrows.splice(index, 1);
+      }
+    }, 400);
   }
 
   updateArrows(): void {
