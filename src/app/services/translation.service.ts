@@ -375,8 +375,12 @@ export class TranslationService {
       pl: 'Zagraj w Grę Warzywną'
     },
     'rotate_and_shoot_instruction': {
-      en: 'Rotate crossbows and shoot arrows to hit vegetables!',
-      pl: 'Obracaj kusze i strzelaj strzałami, aby trafić warzywa!'
+      en: 'Drag crossbows to aim, release to shoot!',
+      pl: 'Przeciągnij kusze, aby celować, puść, aby strzelić!'
+    },
+    'destroy_arrow_tip': {
+      en: 'Click on flying arrows to destroy them!',
+      pl: 'Kliknij latające strzały, aby je zniszczyć!'
     },
     'excellent_work': {
       en: 'Excellent Work!',
@@ -391,8 +395,8 @@ export class TranslationService {
       pl: 'Moc'
     },
     'coming_soon_message': {
-      en: 'I will be programmed someday, but I need the minds of Ania and Michał to come to life',
-      pl: 'Zostanę zaprogramowany pewnego dnia, ale potrzebuję umysłów Ani i Michała, aby ożyć'
+      en: 'I need Ania\'s and Michał\'s minds to come to life',
+      pl: 'Potrzebuję umysłów Ani i Michała, aby ożyć'
     },
     'avoid_junk_food': {
       en: 'Avoid junk food! Hitting it costs -2 points',

@@ -21,6 +21,7 @@ interface Arrow {
   velocityX: number;
   velocityY: number;
   active: boolean;
+  destroying?: boolean;
 }
 
 interface Crossbow {
@@ -46,7 +47,8 @@ interface Crossbow {
 
       <div class="game-instructions">
         <p class="instruction-text">🎯 {{ translate('rotate_and_shoot_instruction') }}</p>
-        <p class="warning-text">⚠️ {{ translate('avoid_junk_food') }}</p>
+        <p class="instruction-text tip">💡 {{ translate('destroy_arrow_tip') }}</p>
+        <p class="instruction-text warning">⚠️ {{ translate('avoid_junk_food') }}</p>
       </div>
 
       <div class="global-power-control" *ngIf="!gameCompleted">
@@ -80,10 +82,13 @@ interface Crossbow {
         <!-- Flying arrows -->
         <div *ngFor="let arrow of arrows"
              class="arrow"
+             [class.destroying]="arrow.destroying"
              [style.left.px]="arrow.x"
              [style.top.px]="arrow.y"
-             [style.transform]="'rotate(' + arrow.angle + 'deg)'">
-          ➤
+             [style.transform]="'rotate(' + arrow.angle + 'deg)'"
+             (click)="destroyArrow(arrow)">
+          <span class="arrow-icon">➤</span>
+          <span class="arrow-fire" *ngIf="arrow.destroying">🔥</span>
         </div>
 
         <!-- Floating Vegetables -->
@@ -176,29 +181,35 @@ interface Crossbow {
       text-align: center;
       margin: 20px auto;
       max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
     }
 
     .instruction-text {
-      font-size: 22px;
+      font-size: 20px;
       color: white;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-      margin: 8px 0;
+      margin: 0;
       background: rgba(0, 0, 0, 0.4);
       padding: 12px 25px;
       border-radius: 15px;
       display: inline-block;
+      width: fit-content;
+      min-width: 400px;
+      text-align: center;
     }
 
-    .warning-text {
-      font-size: 20px;
-      color: white;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-      margin: 8px 0;
+    .instruction-text.tip {
+      background: rgba(33, 150, 243, 0.6);
+      border: 2px solid #2196F3;
+      font-weight: bold;
+    }
+
+    .instruction-text.warning {
       background: rgba(255, 87, 34, 0.6);
       border: 2px solid #ff5722;
-      padding: 12px 25px;
-      border-radius: 15px;
-      display: inline-block;
       font-weight: bold;
     }
 
@@ -451,9 +462,23 @@ interface Crossbow {
       font-size: 30px;
       color: #8B4513;
       z-index: 60;
-      pointer-events: none;
+      pointer-events: auto;
+      cursor: pointer;
       filter: drop-shadow(0 0 5px rgba(139, 69, 19, 0.8));
       transition: all 0.05s linear;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+
+    .arrow:hover {
+      filter: drop-shadow(0 0 10px rgba(255, 0, 0, 1));
+      transform: scale(1.2);
+    }
+
+    .arrow:active {
+      filter: drop-shadow(0 0 15px rgba(255, 100, 0, 1));
     }
 
     .floating-vegetable {
@@ -938,6 +963,13 @@ export class VegetableGameComponent implements OnInit, OnDestroy {
   shootArrow(crossbow: Crossbow, event: MouseEvent): void {
     // Legacy method - now just calls the main shoot function
     this.shootArrowFromCrossbow(crossbow);
+  }
+
+  destroyArrow(arrow: Arrow): void {
+    const index = this.arrows.findIndex(a => a.id === arrow.id);
+    if (index !== -1) {
+      this.arrows.splice(index, 1);
+    }
   }
 
   updateArrows(): void {
