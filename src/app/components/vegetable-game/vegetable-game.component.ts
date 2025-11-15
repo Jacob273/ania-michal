@@ -49,30 +49,31 @@ interface Crossbow {
         <p class="warning-text">⚠️ {{ translate('avoid_junk_food') }}</p>
       </div>
 
+      <div class="global-power-control" *ngIf="!gameCompleted">
+        <label>💪 {{ translate('power') }}:</label>
+        <input type="range"
+               min="1"
+               max="10"
+               [(ngModel)]="globalPower"
+               class="power-slider">
+        <span class="power-value">{{ globalPower }}</span>
+      </div>
+
       <div class="game-area" *ngIf="!gameCompleted">
         <!-- Crossbows in corners with rotation controls -->
         <div *ngFor="let crossbow of crossbows"
              class="crossbow-container"
              [ngClass]="'position-' + crossbow.corner">
           <div class="crossbow-controls">
-            <button class="rotate-btn" (click)="rotateCrossbow(crossbow, -15)">⟲</button>
             <div class="crossbow"
                  [class.active]="activeCrossbowCorner === crossbow.corner"
-                 [class.selected]="selectedCrossbow === crossbow"
+                 [class.dragging]="draggingCrossbow === crossbow"
                  [style.transform]="'rotate(' + (crossbow.angle + CROSSBOW_VISUAL_OFFSET) + 'deg)'"
+                 (mousedown)="onCrossbowMouseDown(crossbow, $event)"
+                 (touchstart)="onCrossbowTouchStart(crossbow, $event)"
                  (click)="handleCrossbowClick(crossbow, $event)">
               🏹
             </div>
-            <button class="rotate-btn" (click)="rotateCrossbow(crossbow, 15)">⟳</button>
-          </div>
-          <div class="power-control">
-            <label>💪 {{ translate('power') }}:</label>
-            <input type="range"
-                   min="1"
-                   max="10"
-                   [(ngModel)]="crossbow.power"
-                   class="power-slider">
-            <span class="power-value">{{ crossbow.power }}</span>
           </div>
         </div>
 
@@ -201,6 +202,26 @@ interface Crossbow {
       font-weight: bold;
     }
 
+    .global-power-control {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 12px 20px;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      margin: 20px auto;
+      max-width: 300px;
+    }
+
+    .global-power-control label {
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+      margin: 0;
+    }
+
     .score-counter {
       font-size: 32px;
       color: #ffeb3b;
@@ -265,7 +286,7 @@ interface Crossbow {
       font-size: 50px;
       transition: all 0.2s ease;
       filter: drop-shadow(0 0 10px rgba(255, 235, 59, 0.8));
-      cursor: pointer;
+      cursor: grab;
       position: relative;
       user-select: none;
       -webkit-user-select: none;
@@ -274,19 +295,10 @@ interface Crossbow {
       -webkit-tap-highlight-color: transparent;
     }
 
-    .crossbow.selected {
-      filter: drop-shadow(0 0 20px rgba(76, 175, 80, 1));
-      animation: pulse-selected 1.5s ease-in-out infinite;
-      transform: scale(1.1);
-    }
-
-    @keyframes pulse-selected {
-      0%, 100% {
-        filter: drop-shadow(0 0 20px rgba(76, 175, 80, 1));
-      }
-      50% {
-        filter: drop-shadow(0 0 30px rgba(76, 175, 80, 1));
-      }
+    .crossbow.dragging {
+      cursor: grabbing;
+      transition: none;
+      filter: drop-shadow(0 0 20px rgba(255, 235, 59, 1));
     }
 
     .crossbow.active {
@@ -680,7 +692,9 @@ export class VegetableGameComponent implements OnInit, OnDestroy {
   spawnInterval: any;
   arrowUpdateInterval: any;
   activeCrossbowCorner: string = '';
-  selectedCrossbow: Crossbow | null = null;
+  draggingCrossbow: Crossbow | null = null;
+  gameAreaElement: HTMLElement | null = null;
+  globalPower: number = 10; // Shared power for all crossbows
 
   vegetableEmojis: string[] = ['🥕', '🥦', '🌽', '🍅', '🥒', '🌶️', '🧄', '🧅', '🥬', '🍆'];
   badObjectEmojis: string[] = ['🍭', '🍬', '🍫', '🍩', '🍰', '🍪', '🧁', '🍦', '🍔', '🍕']; // Candy and junk food
@@ -706,6 +720,14 @@ export class VegetableGameComponent implements OnInit, OnDestroy {
     if (this.arrowUpdateInterval) {
       clearInterval(this.arrowUpdateInterval);
     }
+    this.removeGlobalDragListeners();
+  }
+
+  private removeGlobalDragListeners(): void {
+    document.removeEventListener('mousemove', this.onMouseMove);
+    document.removeEventListener('mouseup', this.onMouseUp);
+    document.removeEventListener('touchmove', this.onTouchMove);
+    document.removeEventListener('touchend', this.onTouchEnd);
   }
 
   startGame(): void {
@@ -718,10 +740,10 @@ export class VegetableGameComponent implements OnInit, OnDestroy {
 
     // Initialize crossbows (angles in degrees: 0=right, 90=down, 180=left, -90=up)
     this.crossbows = [
-      { corner: 'top-left', x: 80, y: 80, angle: 0, power: 5 },      // Start pointing right
-      { corner: 'top-right', x: this.GAME_WIDTH - 80, y: 80, angle: 180, power: 5 }, // Start pointing left
-      { corner: 'bottom-left', x: 80, y: this.GAME_HEIGHT - 80, angle: 0, power: 5 }, // Start pointing right
-      { corner: 'bottom-right', x: this.GAME_WIDTH - 80, y: this.GAME_HEIGHT - 80, angle: 180, power: 5 } // Start pointing left
+      { corner: 'top-left', x: 80, y: 80, angle: 0, power: 10 },      // Start pointing right
+      { corner: 'top-right', x: this.GAME_WIDTH - 80, y: 80, angle: 180, power: 10 }, // Start pointing left
+      { corner: 'bottom-left', x: 80, y: this.GAME_HEIGHT - 80, angle: 0, power: 10 }, // Start pointing right
+      { corner: 'bottom-right', x: this.GAME_WIDTH - 80, y: this.GAME_HEIGHT - 80, angle: 180, power: 10 } // Start pointing left
     ];
 
     // Spawn vegetables periodically
@@ -775,17 +797,96 @@ export class VegetableGameComponent implements OnInit, OnDestroy {
   }
 
   handleCrossbowClick(crossbow: Crossbow, event: MouseEvent): void {
-    if (this.selectedCrossbow === crossbow) {
-      // Already selected - shoot and deselect
-      this.shootArrow(crossbow, event);
-      this.selectedCrossbow = null;
-    } else {
-      // Select the crossbow
-      this.selectedCrossbow = crossbow;
-    }
+    // Click is now only for quick shooting without dragging
+    // The drag handlers will prevent this from firing during drag
   }
 
-  shootArrow(crossbow: Crossbow, event: MouseEvent): void {
+  onCrossbowMouseDown(crossbow: Crossbow, event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.draggingCrossbow = crossbow;
+
+    // Get game area element
+    const target = event.currentTarget as HTMLElement;
+    this.gameAreaElement = target.closest('.game-area') as HTMLElement;
+
+    // Add global listeners
+    document.addEventListener('mousemove', this.onMouseMove);
+    document.addEventListener('mouseup', this.onMouseUp);
+  }
+
+  onCrossbowTouchStart(crossbow: Crossbow, event: TouchEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.draggingCrossbow = crossbow;
+
+    // Get game area element
+    const target = event.currentTarget as HTMLElement;
+    this.gameAreaElement = target.closest('.game-area') as HTMLElement;
+
+    // Add global listeners
+    document.addEventListener('touchmove', this.onTouchMove, { passive: false });
+    document.addEventListener('touchend', this.onTouchEnd);
+  }
+
+  onMouseMove = (event: MouseEvent): void => {
+    if (!this.draggingCrossbow || !this.gameAreaElement) return;
+
+    this.updateCrossbowAngle(event.clientX, event.clientY);
+  }
+
+  onTouchMove = (event: TouchEvent): void => {
+    if (!this.draggingCrossbow || !this.gameAreaElement) return;
+    event.preventDefault();
+
+    const touch = event.touches[0];
+    this.updateCrossbowAngle(touch.clientX, touch.clientY);
+  }
+
+  onMouseUp = (event: MouseEvent): void => {
+    this.endDrag();
+  }
+
+  onTouchEnd = (event: TouchEvent): void => {
+    this.endDrag();
+  }
+
+  private updateCrossbowAngle(clientX: number, clientY: number): void {
+    if (!this.draggingCrossbow || !this.gameAreaElement) return;
+
+    const gameRect = this.gameAreaElement.getBoundingClientRect();
+
+    // Calculate mouse position relative to game area
+    const mouseX = clientX - gameRect.left;
+    const mouseY = clientY - gameRect.top;
+
+    // Calculate crossbow position in pixels
+    const crossbowX = this.draggingCrossbow.x;
+    const crossbowY = this.draggingCrossbow.y;
+
+    // Calculate angle from crossbow to mouse
+    const deltaX = mouseX - crossbowX;
+    const deltaY = mouseY - crossbowY;
+    const angleRad = Math.atan2(deltaY, deltaX);
+    const angleDeg = (angleRad * 180) / Math.PI;
+
+    this.draggingCrossbow.angle = angleDeg;
+  }
+
+  private endDrag(): void {
+    if (this.draggingCrossbow) {
+      // Shoot the arrow when releasing the drag
+      this.shootArrowFromCrossbow(this.draggingCrossbow);
+    }
+
+    // Clear dragging state
+    this.draggingCrossbow = null;
+    this.gameAreaElement = null;
+
+    this.removeGlobalDragListeners();
+  }
+
+  shootArrowFromCrossbow(crossbow: Crossbow): void {
     if (this.gameCompleted) return;
 
     // Activate crossbow animation
@@ -794,13 +895,16 @@ export class VegetableGameComponent implements OnInit, OnDestroy {
       this.activeCrossbowCorner = '';
     }, 300);
 
-    // Get the actual crossbow element position
-    const button = event.currentTarget as HTMLElement;
-    const container = button.closest('.crossbow-container') as HTMLElement;
-    const crossbowElement = container?.querySelector('.crossbow') as HTMLElement;
-    const gameArea = container?.closest('.game-area') as HTMLElement;
+    // Get the actual crossbow element position from DOM
+    const gameArea = document.querySelector('.game-area') as HTMLElement;
+    const crossbowContainer = document.querySelector(`.crossbow-container.position-${crossbow.corner}`) as HTMLElement;
+    const crossbowElement = crossbowContainer?.querySelector('.crossbow') as HTMLElement;
 
-    if (!crossbowElement || !gameArea) return;
+    if (!crossbowElement || !gameArea) {
+      // Fallback to stored position if DOM elements not found
+      this.createArrow(crossbow, crossbow.x, crossbow.y);
+      return;
+    }
 
     // Get positions relative to game area
     const gameRect = gameArea.getBoundingClientRect();
@@ -810,9 +914,13 @@ export class VegetableGameComponent implements OnInit, OnDestroy {
     const startX = crossbowRect.left - gameRect.left + crossbowRect.width / 2;
     const startY = crossbowRect.top - gameRect.top + crossbowRect.height / 2;
 
-    // Calculate arrow velocity based on angle and power
+    this.createArrow(crossbow, startX, startY);
+  }
+
+  private createArrow(crossbow: Crossbow, startX: number, startY: number): void {
+    // Calculate arrow velocity based on angle and global power
     const angleRad = (crossbow.angle * Math.PI) / 180;
-    const speed = this.ARROW_SPEED * (crossbow.power / 5); // Scale speed by power
+    const speed = this.ARROW_SPEED * (this.globalPower / 5); // Scale speed by global power
 
     const arrow: Arrow = {
       id: this.nextArrowId++,
@@ -825,6 +933,11 @@ export class VegetableGameComponent implements OnInit, OnDestroy {
     };
 
     this.arrows.push(arrow);
+  }
+
+  shootArrow(crossbow: Crossbow, event: MouseEvent): void {
+    // Legacy method - now just calls the main shoot function
+    this.shootArrowFromCrossbow(crossbow);
   }
 
   updateArrows(): void {
