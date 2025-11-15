@@ -322,6 +322,10 @@ export class TranslationService {
       en: 'Teeth Brushed',
       pl: 'Umyte Zęby'
     },
+    'vegetables_eaten': {
+      en: 'Vegetables Eaten',
+      pl: 'Zjedzone Warzywa'
+    },
     'squeeze_toothpaste': {
       en: 'Squeeze toothpaste onto the brush!',
       pl: 'Wyciśnij pastę na szczoteczkę!'

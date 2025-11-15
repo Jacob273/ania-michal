@@ -5,6 +5,7 @@ import { AuthService } from './services/auth.service';
 import { RoomCleaningService } from './services/room-cleaning.service';
 import { BedtimeService } from './services/bedtime.service';
 import { TeethBrushingService } from './services/teeth-brushing.service';
+import { VegetableGameService } from './services/vegetable-game.service';
 
 @Component({
   selector: 'app-root',
@@ -105,6 +106,10 @@ import { TeethBrushingService } from './services/teeth-brushing.service';
               <div class="progress-label">{{ translate('teeth_brushed') }} 🦷</div>
               <div class="progress-value">{{ aniaTeethBrushed }}</div>
             </div>
+            <div class="progress-box">
+              <div class="progress-label">{{ translate('vegetables_eaten') }} 🥦</div>
+              <div class="progress-value">{{ aniaVegetablesCompleted }}</div>
+            </div>
           </div>
         </div>
 
@@ -192,6 +197,10 @@ import { TeethBrushingService } from './services/teeth-brushing.service';
               <div class="progress-label">{{ translate('teeth_brushed') }} 🦷</div>
               <div class="progress-value">{{ michalTeethBrushed }}</div>
             </div>
+            <div class="progress-box">
+              <div class="progress-label">{{ translate('vegetables_eaten') }} 🥦</div>
+              <div class="progress-value">{{ michalVegetablesCompleted }}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -238,7 +247,8 @@ import { TeethBrushingService } from './services/teeth-brushing.service';
       <app-vegetable-game
         *ngIf="currentView === 'vegetables' && isAuthenticated"
         [playerName]="currentPlayer"
-        (backToHome)="goHome()">
+        (backToHome)="goHome()"
+        (vegetablesCompleted)="onVegetablesCompleted()">
       </app-vegetable-game>
 
       <!-- Cleaning Room Image Modal -->
@@ -1006,6 +1016,9 @@ export class AppComponent implements OnInit {
   aniaTeethBrushed: number = 0;
   michalTeethBrushed: number = 0;
 
+  aniaVegetablesCompleted: number = 0;
+  michalVegetablesCompleted: number = 0;
+
   aniaShowFavorites: boolean = true;
   michalShowFavorites: boolean = true;
   aniaListAnimating: boolean = false;
@@ -1029,7 +1042,8 @@ export class AppComponent implements OnInit {
     private authService: AuthService,
     private roomCleaningService: RoomCleaningService,
     private bedtimeService: BedtimeService,
-    private teethBrushingService: TeethBrushingService
+    private teethBrushingService: TeethBrushingService,
+    private vegetableGameService: VegetableGameService
   ) {}
 
   ngOnInit(): void {
@@ -1082,6 +1096,15 @@ export class AppComponent implements OnInit {
 
     this.teethBrushingService.michalTeeth$.subscribe(stats => {
       this.michalTeethBrushed = stats.teethBrushed;
+    });
+
+    // Subscribe to vegetable game stats
+    this.vegetableGameService.aniaVegetables$.subscribe(stats => {
+      this.aniaVegetablesCompleted = stats.vegetablesCompleted;
+    });
+
+    this.vegetableGameService.michalVegetables$.subscribe(stats => {
+      this.michalVegetablesCompleted = stats.vegetablesCompleted;
     });
   }
 
@@ -1228,5 +1251,10 @@ export class AppComponent implements OnInit {
     this.currentPlayer = this.vegetablesPlayer;
     this.showVegetablesModal = false;
     this.currentView = 'vegetables';
+  }
+
+  onVegetablesCompleted(): void {
+    const player = this.currentPlayer as 'ANIA' | 'MICHAL';
+    this.vegetableGameService.incrementVegetablesCompleted(player);
   }
 }
