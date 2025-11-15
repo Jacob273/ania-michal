@@ -373,6 +373,22 @@ export class TranslationService {
     'play_vegetable_game': {
       en: 'Play Vegetable Game',
       pl: 'Zagraj w Grę Warzywną'
+    },
+    'rotate_and_shoot_instruction': {
+      en: 'Rotate crossbows and shoot arrows to hit vegetables!',
+      pl: 'Obracaj kusze i strzelaj strzałami, aby trafić warzywa!'
+    },
+    'excellent_work': {
+      en: 'Excellent Work!',
+      pl: 'Doskonała Robota!'
+    },
+    'shoot': {
+      en: 'Shoot',
+      pl: 'Strzel'
+    },
+    'power': {
+      en: 'Power',
+      pl: 'Moc'
     }
   };
 
