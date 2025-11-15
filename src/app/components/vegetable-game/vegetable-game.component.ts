@@ -41,8 +41,12 @@ interface Crossbow {
 
       <div class="game-header">
         <h1 class="game-title">{{ translate('eating_vegetables_game') }} 🥦🏹</h1>
-        <p class="game-instruction">{{ translate('rotate_and_shoot_instruction') }}</p>
         <div class="score-counter">{{ vegetablesShot }} / {{ targetVegetables }}</div>
+      </div>
+
+      <div class="game-instructions">
+        <p class="instruction-text">🎯 {{ translate('rotate_and_shoot_instruction') }}</p>
+        <p class="warning-text">⚠️ {{ translate('avoid_junk_food') }}</p>
       </div>
 
       <div class="game-area" *ngIf="!gameCompleted">
@@ -54,11 +58,18 @@ interface Crossbow {
             <button class="rotate-btn" (click)="rotateCrossbow(crossbow, -15)">⟲</button>
             <div class="crossbow"
                  [class.active]="activeCrossbowCorner === crossbow.corner"
-                 [style.transform]="'rotate(' + (crossbow.angle + CROSSBOW_VISUAL_OFFSET) + 'deg)'">
+                 [class.selected]="selectedCrossbow === crossbow"
+                 [style.transform]="'rotate(' + (crossbow.angle + CROSSBOW_VISUAL_OFFSET) + 'deg)'"
+                 (click)="toggleSelectCrossbow(crossbow)">
               🏹
             </div>
             <button class="rotate-btn" (click)="rotateCrossbow(crossbow, 15)">⟳</button>
           </div>
+          <button class="shoot-from-selected-btn"
+                  *ngIf="selectedCrossbow === crossbow"
+                  (click)="shootFromSelected($event)">
+            🎯 {{ translate('shoot') }}
+          </button>
           <div class="power-control">
             <label>💪 {{ translate('power') }}:</label>
             <input type="range"
@@ -68,7 +79,6 @@ interface Crossbow {
                    class="power-slider">
             <span class="power-value">{{ crossbow.power }}</span>
           </div>
-          <button class="shoot-btn" (click)="shootArrow(crossbow, $event)">🎯 {{ translate('shoot') }}</button>
         </div>
 
         <!-- Flying arrows -->
@@ -92,11 +102,6 @@ interface Crossbow {
           <span class="vegetable-emoji">{{ vegetable.emoji }}</span>
           <span class="fire-effect" *ngIf="vegetable.shot && !vegetable.isBad">🔥</span>
           <span class="bad-effect" *ngIf="vegetable.shot && vegetable.isBad">💢</span>
-        </div>
-
-        <!-- Game hint -->
-        <div class="game-hint">
-          <p>🎯 {{ translate('rotate_and_shoot_instruction') }}</p>
         </div>
       </div>
 
@@ -171,11 +176,34 @@ interface Crossbow {
       margin: 0 0 10px 0;
     }
 
-    .game-instruction {
-      font-size: 24px;
+    .game-instructions {
+      text-align: center;
+      margin: 20px auto;
+      max-width: 900px;
+    }
+
+    .instruction-text {
+      font-size: 22px;
       color: white;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-      margin: 0 0 15px 0;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      margin: 8px 0;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 12px 25px;
+      border-radius: 15px;
+      display: inline-block;
+    }
+
+    .warning-text {
+      font-size: 20px;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      margin: 8px 0;
+      background: rgba(255, 87, 34, 0.6);
+      border: 2px solid #ff5722;
+      padding: 12px 25px;
+      border-radius: 15px;
+      display: inline-block;
+      font-weight: bold;
     }
 
     .score-counter {
@@ -244,6 +272,26 @@ interface Crossbow {
       filter: drop-shadow(0 0 10px rgba(255, 235, 59, 0.8));
       cursor: pointer;
       position: relative;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .crossbow.selected {
+      filter: drop-shadow(0 0 20px rgba(76, 175, 80, 1));
+      animation: pulse-selected 1.5s ease-in-out infinite;
+      transform: scale(1.1);
+    }
+
+    @keyframes pulse-selected {
+      0%, 100% {
+        filter: drop-shadow(0 0 20px rgba(76, 175, 80, 1));
+      }
+      50% {
+        filter: drop-shadow(0 0 30px rgba(76, 175, 80, 1));
+      }
     }
 
     .crossbow.active {
@@ -260,6 +308,40 @@ interface Crossbow {
       100% {
         filter: drop-shadow(0 0 10px rgba(255, 235, 59, 0.8));
       }
+    }
+
+    .shoot-from-selected-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Quicksand', sans-serif;
+      box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4);
+      animation: glow-shoot-btn 1.5s ease-in-out infinite;
+    }
+
+    @keyframes glow-shoot-btn {
+      0%, 100% {
+        box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4);
+      }
+      50% {
+        box-shadow: 0 4px 20px rgba(76, 175, 80, 0.8);
+      }
+    }
+
+    .shoot-from-selected-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 15px rgba(76, 175, 80, 0.6);
+    }
+
+    .shoot-from-selected-btn:active {
+      transform: scale(0.95);
     }
 
     .rotate-btn {
@@ -510,24 +592,6 @@ interface Crossbow {
       }
     }
 
-    .game-hint {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      z-index: 10;
-    }
-
-    .game-hint p {
-      color: white;
-      font-size: 20px;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-      margin: 0;
-      background: rgba(0, 0, 0, 0.3);
-      padding: 10px 20px;
-      border-radius: 15px;
-    }
 
     .success-screen {
       position: fixed;
@@ -647,13 +711,14 @@ export class VegetableGameComponent implements OnInit, OnDestroy {
   arrows: Arrow[] = [];
   crossbows: Crossbow[] = [];
   vegetablesShot: number = 0;
-  targetVegetables: number = 50;
+  targetVegetables: number = 20;
   gameCompleted: boolean = false;
   nextVegetableId: number = 0;
   nextArrowId: number = 0;
   spawnInterval: any;
   arrowUpdateInterval: any;
   activeCrossbowCorner: string = '';
+  selectedCrossbow: Crossbow | null = null;
 
   vegetableEmojis: string[] = ['🥕', '🥦', '🌽', '🍅', '🥒', '🌶️', '🧄', '🧅', '🥬', '🍆'];
   badObjectEmojis: string[] = ['🍭', '🍬', '🍫', '🍩', '🍰', '🍪', '🧁', '🍦', '🍔', '🍕']; // Candy and junk food
@@ -745,6 +810,22 @@ export class VegetableGameComponent implements OnInit, OnDestroy {
     // Normalize angle to -180 to 180
     if (crossbow.angle > 180) crossbow.angle -= 360;
     if (crossbow.angle < -180) crossbow.angle += 360;
+  }
+
+  toggleSelectCrossbow(crossbow: Crossbow): void {
+    if (this.selectedCrossbow === crossbow) {
+      // Deselect if clicking the same crossbow
+      this.selectedCrossbow = null;
+    } else {
+      // Select the crossbow
+      this.selectedCrossbow = crossbow;
+    }
+  }
+
+  shootFromSelected(event: MouseEvent): void {
+    if (this.selectedCrossbow) {
+      this.shootArrow(this.selectedCrossbow, event);
+    }
   }
 
   shootArrow(crossbow: Crossbow, event: MouseEvent): void {

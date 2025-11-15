@@ -389,6 +389,14 @@ export class TranslationService {
     'power': {
       en: 'Power',
       pl: 'Moc'
+    },
+    'coming_soon_message': {
+      en: 'I will be programmed someday, but I need the minds of Ania and Michał to come to life',
+      pl: 'Zostanę zaprogramowany pewnego dnia, ale potrzebuję umysłów Ani i Michała, aby ożyć'
+    },
+    'avoid_junk_food': {
+      en: 'Avoid junk food! Hitting it costs -2 points',
+      pl: 'Unikaj niezdrowego jedzenia! Trafienie kosztuje -2 punkty'
     }
   };
 

@@ -40,10 +40,28 @@ import { TeethBrushingService } from './services/teeth-brushing.service';
                     [class.fade-out]="aniaListAnimating"
                     [class.fade-in]="!aniaListAnimating"
                     *ngIf="aniaShowFavorites">
-                  <li>{{ translate('drawing_painting') }}</li>
-                  <li (click)="startBookTracking('ANIA')">{{ translate('reading_books') }}</li>
-                  <li>{{ translate('playing_games') }}</li>
-                  <li>{{ translate('making_crafts') }}</li>
+                  <li class="not-implemented">
+                    {{ translate('drawing_painting') }}
+                    <span class="coming-soon-icon">
+                      💡
+                      <span class="custom-tooltip">{{ translate('coming_soon_message') }}</span>
+                    </span>
+                  </li>
+                  <li (click)="startBookTracking('ANIA')" class="clickable-item">{{ translate('reading_books') }}</li>
+                  <li class="not-implemented">
+                    {{ translate('playing_games') }}
+                    <span class="coming-soon-icon">
+                      💡
+                      <span class="custom-tooltip">{{ translate('coming_soon_message') }}</span>
+                    </span>
+                  </li>
+                  <li class="not-implemented">
+                    {{ translate('making_crafts') }}
+                    <span class="coming-soon-icon">
+                      💡
+                      <span class="custom-tooltip">{{ translate('coming_soon_message') }}</span>
+                    </span>
+                  </li>
                   <li (click)="startLearning('ANIA')" class="learning-item">{{ translate('learning_english') }} 📚</li>
                 </ul>
                 <ul class="fun-list unfavorite-list"
@@ -51,7 +69,13 @@ import { TeethBrushingService } from './services/teeth-brushing.service';
                     [class.fade-in]="!aniaListAnimating"
                     *ngIf="!aniaShowFavorites">
                   <li (click)="showCleaningImage('ANIA')" class="clickable-item">{{ translate('cleaning_room') }}</li>
-                  <li>{{ translate('doing_homework') }}</li>
+                  <li class="not-implemented">
+                    {{ translate('doing_homework') }}
+                    <span class="coming-soon-icon" (click)="$event.stopPropagation()">
+                      💡
+                      <span class="custom-tooltip">{{ translate('coming_soon_message') }}</span>
+                    </span>
+                  </li>
                   <li (click)="showBedtimeImage('ANIA')" class="clickable-item">{{ translate('going_to_bed_early') }}</li>
                   <li (click)="showVegetablesImage('ANIA')" class="clickable-item">{{ translate('eating_vegetables') }}</li>
                   <li (click)="showTeethBrushingImage('ANIA')" class="clickable-item">{{ translate('brushing_teeth') }}</li>
@@ -103,10 +127,28 @@ import { TeethBrushingService } from './services/teeth-brushing.service';
                     [class.fade-out]="michalListAnimating"
                     [class.fade-in]="!michalListAnimating"
                     *ngIf="michalShowFavorites">
-                  <li>{{ translate('video_games') }}</li>
-                  <li>{{ translate('sports_soccer') }}</li>
-                  <li (click)="startBookTracking('MICHAL')">{{ translate('reading_books') }}</li>
-                  <li>{{ translate('building_legos') }}</li>
+                  <li class="not-implemented">
+                    {{ translate('video_games') }}
+                    <span class="coming-soon-icon">
+                      💡
+                      <span class="custom-tooltip">{{ translate('coming_soon_message') }}</span>
+                    </span>
+                  </li>
+                  <li class="not-implemented">
+                    {{ translate('sports_soccer') }}
+                    <span class="coming-soon-icon">
+                      💡
+                      <span class="custom-tooltip">{{ translate('coming_soon_message') }}</span>
+                    </span>
+                  </li>
+                  <li (click)="startBookTracking('MICHAL')" class="clickable-item">{{ translate('reading_books') }}</li>
+                  <li class="not-implemented">
+                    {{ translate('building_legos') }}
+                    <span class="coming-soon-icon">
+                      💡
+                      <span class="custom-tooltip">{{ translate('coming_soon_message') }}</span>
+                    </span>
+                  </li>
                   <li (click)="startLearning('MICHAL')" class="learning-item">{{ translate('learning_english') }} 📚</li>
                 </ul>
                 <ul class="fun-list unfavorite-list"
@@ -114,7 +156,13 @@ import { TeethBrushingService } from './services/teeth-brushing.service';
                     [class.fade-in]="!michalListAnimating"
                     *ngIf="!michalShowFavorites">
                   <li (click)="showCleaningImage('MICHAL')" class="clickable-item">{{ translate('cleaning_room') }}</li>
-                  <li>{{ translate('doing_homework') }}</li>
+                  <li class="not-implemented">
+                    {{ translate('doing_homework') }}
+                    <span class="coming-soon-icon" (click)="$event.stopPropagation()">
+                      💡
+                      <span class="custom-tooltip">{{ translate('coming_soon_message') }}</span>
+                    </span>
+                  </li>
                   <li (click)="showBedtimeImage('MICHAL')" class="clickable-item">{{ translate('going_to_bed_early') }}</li>
                   <li (click)="showVegetablesImage('MICHAL')" class="clickable-item">{{ translate('eating_vegetables') }}</li>
                   <li (click)="showTeethBrushingImage('MICHAL')" class="clickable-item">{{ translate('brushing_teeth') }}</li>
@@ -477,6 +525,154 @@ import { TeethBrushingService } from './services/teeth-brushing.service';
     @keyframes pulse {
       0%, 100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7); }
       50% { box-shadow: 0 0 0 10px rgba(102, 126, 234, 0); }
+    }
+
+    .not-implemented {
+      opacity: 0.5;
+      background: #e0e0e0 !important;
+      color: #999 !important;
+      cursor: not-allowed !important;
+      position: relative;
+      border-left-color: #ccc !important;
+    }
+
+    .not-implemented:hover {
+      background: #e0e0e0 !important;
+      color: #999 !important;
+      transform: none !important;
+      cursor: not-allowed !important;
+    }
+
+    .coming-soon-icon {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 28px;
+      animation: glow-bulb 2s ease-in-out infinite;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .coming-soon-icon:active {
+      transform: translateY(-50%) scale(0.9);
+    }
+
+    @keyframes glow-bulb {
+      0%, 100% {
+        filter: brightness(1);
+        transform: translateY(-50%) scale(1);
+      }
+      50% {
+        filter: brightness(1.5);
+        transform: translateY(-50%) scale(1.15);
+      }
+    }
+
+    .custom-tooltip {
+      visibility: hidden;
+      opacity: 0;
+      position: absolute;
+      right: 50px;
+      top: 50%;
+      transform: translateY(-50%) scale(0.8);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px 25px;
+      border-radius: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      width: 280px;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      transition: all 0.3s ease;
+      line-height: 1.5;
+      border: 3px solid #ffd700;
+      pointer-events: none;
+    }
+
+    .custom-tooltip::before {
+      content: '';
+      position: absolute;
+      right: -15px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 8px solid transparent;
+      border-left-color: #ffd700;
+      z-index: 1;
+    }
+
+    .custom-tooltip::after {
+      content: '';
+      position: absolute;
+      right: -9px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 8px solid transparent;
+      border-left-color: #667eea;
+      z-index: 2;
+    }
+
+    /* Backdrop for tooltip to ensure visibility */
+    .coming-soon-icon:hover::before,
+    .coming-soon-icon:active::before,
+    .coming-soon-icon:focus::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 999;
+      animation: fadeInBackdrop 0.3s ease;
+    }
+
+    @keyframes fadeInBackdrop {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .coming-soon-icon:hover .custom-tooltip,
+    .coming-soon-icon:active .custom-tooltip,
+    .coming-soon-icon:focus .custom-tooltip {
+      visibility: visible;
+      opacity: 1 !important;
+      transform: translateY(-50%) scale(1);
+    }
+
+    @media (max-width: 768px) {
+      .custom-tooltip {
+        right: auto;
+        left: 50%;
+        top: -80px;
+        transform: translateX(-50%) scale(0.8);
+        width: 240px;
+        font-size: 16px;
+      }
+
+      .custom-tooltip::before,
+      .custom-tooltip::after {
+        right: auto;
+        left: 50%;
+        top: 100%;
+        transform: translateX(-50%) rotate(90deg);
+      }
+
+      .coming-soon-icon:hover .custom-tooltip,
+      .coming-soon-icon:active .custom-tooltip,
+      .coming-soon-icon:focus .custom-tooltip {
+        transform: translateX(-50%) scale(1);
+      }
+    }
+
+    .clickable-item {
+      cursor: pointer;
+    }
+
+    .clickable-item:hover {
+      cursor: pointer;
     }
 
     .score-box {
