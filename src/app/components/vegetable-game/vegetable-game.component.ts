@@ -10,6 +10,7 @@ interface FloatingVegetable {
   animationDuration: number;
   falling?: boolean;
   fallSpeed?: number;
+  isBad?: boolean; // True for bad objects (reduce counter), false for vegetables
 }
 
 interface Arrow {
@@ -84,11 +85,13 @@ interface Crossbow {
              class="floating-vegetable"
              [class.shot]="vegetable.shot"
              [class.falling]="vegetable.falling"
+             [class.bad-object]="vegetable.isBad"
              [style.left.%]="vegetable.left"
              [style.top.%]="vegetable.top"
              [style.animation-duration.s]="vegetable.animationDuration">
           <span class="vegetable-emoji">{{ vegetable.emoji }}</span>
-          <span class="fire-effect" *ngIf="vegetable.shot">🔥</span>
+          <span class="fire-effect" *ngIf="vegetable.shot && !vegetable.isBad">🔥</span>
+          <span class="bad-effect" *ngIf="vegetable.shot && vegetable.isBad">💢</span>
         </div>
 
         <!-- Game hint -->
@@ -399,7 +402,7 @@ interface Crossbow {
 
     .floating-vegetable {
       position: absolute;
-      font-size: 60px;
+      font-size: 45px;
       animation: float linear infinite;
       filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
       transition: all 0.2s ease;
@@ -414,9 +417,27 @@ interface Crossbow {
       pointer-events: none;
     }
 
+    .floating-vegetable.bad-object {
+      filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.7));
+      animation: pulse-red 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-red {
+      0%, 100% {
+        filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.7));
+      }
+      50% {
+        filter: drop-shadow(0 0 25px rgba(255, 0, 0, 1));
+      }
+    }
+
     .floating-vegetable.falling {
       animation: fall-down 1s ease-in forwards;
       filter: brightness(0.5) drop-shadow(0 0 20px rgba(255, 100, 0, 0.8));
+    }
+
+    .floating-vegetable.bad-object.falling {
+      filter: brightness(0.5) drop-shadow(0 0 20px rgba(128, 0, 128, 0.8));
     }
 
     .vegetable-emoji {
@@ -431,6 +452,13 @@ interface Crossbow {
       z-index: 2;
     }
 
+    .bad-effect {
+      position: absolute;
+      font-size: 40px;
+      animation: bad-hit 0.3s ease-out infinite;
+      z-index: 2;
+    }
+
     @keyframes burn {
       0%, 100% {
         transform: scale(1) rotate(-10deg);
@@ -439,6 +467,17 @@ interface Crossbow {
       50% {
         transform: scale(1.3) rotate(10deg);
         opacity: 0.8;
+      }
+    }
+
+    @keyframes bad-hit {
+      0%, 100% {
+        transform: scale(1) rotate(-15deg);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.4) rotate(15deg);
+        opacity: 0.9;
       }
     }
 
@@ -608,7 +647,7 @@ export class VegetableGameComponent implements OnInit, OnDestroy {
   arrows: Arrow[] = [];
   crossbows: Crossbow[] = [];
   vegetablesShot: number = 0;
-  targetVegetables: number = 20;
+  targetVegetables: number = 50;
   gameCompleted: boolean = false;
   nextVegetableId: number = 0;
   nextArrowId: number = 0;
@@ -616,15 +655,16 @@ export class VegetableGameComponent implements OnInit, OnDestroy {
   arrowUpdateInterval: any;
   activeCrossbowCorner: string = '';
 
-  vegetableEmojis: string[] = ['🥕', '🥦', '🌽', '🍅', '🥒', '🫑', '🧄', '🧅', '🥬', '🍆'];
+  vegetableEmojis: string[] = ['🥕', '🥦', '🌽', '🍅', '🥒', '🌶️', '🧄', '🧅', '🥬', '🍆'];
+  badObjectEmojis: string[] = ['🍭', '🍬', '🍫', '🍩', '🍰', '🍪', '🧁', '🍦', '🍔', '🍕']; // Candy and junk food
 
   // Game area dimensions
   readonly GAME_WIDTH = 1000;
   readonly GAME_HEIGHT = 550;
   readonly ARROW_SPEED = 5; // pixels per frame
   readonly ARROW_SIZE = 30;
-  readonly VEGETABLE_SIZE = 60;
-  readonly CROSSBOW_VISUAL_OFFSET =40; // Offset to align crossbow emoji with arrow direction
+  readonly VEGETABLE_SIZE = 45; // Reduced from 60 for harder difficulty
+  readonly CROSSBOW_VISUAL_OFFSET = 40; // Offset to align crossbow emoji with arrow direction
 
   constructor(public translationService: TranslationService) {}
 
@@ -676,13 +716,18 @@ export class VegetableGameComponent implements OnInit, OnDestroy {
   }
 
   spawnVegetable(): void {
+    // 20% chance to spawn a bad object
+    const isBad = Math.random() < 0.2;
+    const emojiArray = isBad ? this.badObjectEmojis : this.vegetableEmojis;
+
     const vegetable: FloatingVegetable = {
       id: this.nextVegetableId++,
       left: Math.random() * 70 + 15, // 15% to 85%
       top: Math.random() * 60 + 20, // 20% to 80%
-      emoji: this.vegetableEmojis[Math.floor(Math.random() * this.vegetableEmojis.length)],
+      emoji: emojiArray[Math.floor(Math.random() * emojiArray.length)],
       shot: false,
-      animationDuration: Math.random() * 4 + 6 // 6-10 seconds
+      animationDuration: Math.random() * 3 + 4, // 4-7 seconds (faster movement)
+      isBad: isBad
     };
     this.vegetables.push(vegetable);
 
@@ -754,18 +799,19 @@ export class VegetableGameComponent implements OnInit, OnDestroy {
       arrow.x += arrow.velocityX;
       arrow.y += arrow.velocityY;
 
-      // Check collision with vegetables
-      this.checkArrowCollisions(arrow);
+      // Check collision with vegetables - returns true if arrow hit something
+      const hitSomething = this.checkArrowCollisions(arrow);
 
-      // Remove arrow if it goes out of bounds
-      if (arrow.x < -50 || arrow.x > this.GAME_WIDTH + 50 ||
+      // Remove arrow if it hit something or goes out of bounds
+      if (hitSomething ||
+          arrow.x < -50 || arrow.x > this.GAME_WIDTH + 50 ||
           arrow.y < -50 || arrow.y > this.GAME_HEIGHT + 50) {
         this.arrows.splice(i, 1);
       }
     }
   }
 
-  checkArrowCollisions(arrow: Arrow): void {
+  checkArrowCollisions(arrow: Arrow): boolean {
     for (const vegetable of this.vegetables) {
       if (vegetable.shot) continue;
 
@@ -784,7 +830,15 @@ export class VegetableGameComponent implements OnInit, OnDestroy {
         // Hit detected!
         vegetable.shot = true;
         vegetable.falling = true;
-        this.vegetablesShot++;
+
+        // Check if it's a bad object
+        if (vegetable.isBad) {
+          // Hitting bad object reduces score by 2
+          this.vegetablesShot = Math.max(0, this.vegetablesShot - 2);
+        } else {
+          // Hitting vegetable increases score
+          this.vegetablesShot++;
+        }
 
         // Remove vegetable after falling animation
         setTimeout(() => {
@@ -804,10 +858,13 @@ export class VegetableGameComponent implements OnInit, OnDestroy {
           }, 500);
         }
 
-        // Arrow continues (can hit multiple vegetables)
-        // Don't deactivate the arrow here
+        // Arrow hit something, return true to remove it
+        return true;
       }
     }
+
+    // Arrow didn't hit anything
+    return false;
   }
 
   translate(key: string): string {
