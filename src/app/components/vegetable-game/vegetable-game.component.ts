@@ -60,16 +60,11 @@ interface Crossbow {
                  [class.active]="activeCrossbowCorner === crossbow.corner"
                  [class.selected]="selectedCrossbow === crossbow"
                  [style.transform]="'rotate(' + (crossbow.angle + CROSSBOW_VISUAL_OFFSET) + 'deg)'"
-                 (click)="toggleSelectCrossbow(crossbow)">
+                 (click)="handleCrossbowClick(crossbow, $event)">
               🏹
             </div>
             <button class="rotate-btn" (click)="rotateCrossbow(crossbow, 15)">⟳</button>
           </div>
-          <button class="shoot-from-selected-btn"
-                  *ngIf="selectedCrossbow === crossbow"
-                  (click)="shootFromSelected($event)">
-            🎯 {{ translate('shoot') }}
-          </button>
           <div class="power-control">
             <label>💪 {{ translate('power') }}:</label>
             <input type="range"
@@ -310,39 +305,6 @@ interface Crossbow {
       }
     }
 
-    .shoot-from-selected-btn {
-      width: 100%;
-      padding: 12px;
-      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-family: 'Quicksand', sans-serif;
-      box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4);
-      animation: glow-shoot-btn 1.5s ease-in-out infinite;
-    }
-
-    @keyframes glow-shoot-btn {
-      0%, 100% {
-        box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4);
-      }
-      50% {
-        box-shadow: 0 4px 20px rgba(76, 175, 80, 0.8);
-      }
-    }
-
-    .shoot-from-selected-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 15px rgba(76, 175, 80, 0.6);
-    }
-
-    .shoot-from-selected-btn:active {
-      transform: scale(0.95);
-    }
 
     .rotate-btn {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -812,19 +774,14 @@ export class VegetableGameComponent implements OnInit, OnDestroy {
     if (crossbow.angle < -180) crossbow.angle += 360;
   }
 
-  toggleSelectCrossbow(crossbow: Crossbow): void {
+  handleCrossbowClick(crossbow: Crossbow, event: MouseEvent): void {
     if (this.selectedCrossbow === crossbow) {
-      // Deselect if clicking the same crossbow
+      // Already selected - shoot and deselect
+      this.shootArrow(crossbow, event);
       this.selectedCrossbow = null;
     } else {
       // Select the crossbow
       this.selectedCrossbow = crossbow;
-    }
-  }
-
-  shootFromSelected(event: MouseEvent): void {
-    if (this.selectedCrossbow) {
-      this.shootArrow(this.selectedCrossbow, event);
     }
   }
 
