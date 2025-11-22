@@ -11,7 +11,7 @@ interface Tooth {
 @Component({
   selector: 'app-teeth-brushing-game',
   template: `
-    <div class="teeth-game-container" [class.ania-theme]="playerName === 'ANIA'" [class.michal-theme]="playerName === 'MICHAL'">
+    <div class="teeth-game-container" [class.ania-theme]="playerName === 'ANIA'" [class.nadia-theme]="playerName === 'NADIA'" [class.michal-theme]="playerName === 'MICHAL'">
       <button class="back-button" (click)="goBack()">
         ← {{ translate('back_home') }}
       </button>
@@ -156,6 +156,10 @@ interface Tooth {
 
     .ania-theme {
       background: linear-gradient(135deg, #ff6b9d 0%, #ffa5c8 100%);
+    }
+
+    .nadia-theme {
+      background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
     }
 
     .michal-theme {

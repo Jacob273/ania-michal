@@ -41,13 +41,7 @@ import { VegetableGameService } from './services/vegetable-game.service';
                     [class.fade-out]="aniaListAnimating"
                     [class.fade-in]="!aniaListAnimating"
                     *ngIf="aniaShowFavorites">
-                  <li class="not-implemented">
-                    {{ translate('drawing_painting') }}
-                    <span class="coming-soon-icon">
-                      💡
-                      <span class="custom-tooltip">{{ translate('coming_soon_message') }}</span>
-                    </span>
-                  </li>
+                  <li (click)="showDrawingImage('ANIA')" class="clickable-item">{{ translate('drawing_painting') }}</li>
                   <li (click)="startBookTracking('ANIA')" class="clickable-item">{{ translate('reading_books') }}</li>
                   <li class="not-implemented">
                     {{ translate('playing_games') }}
@@ -113,6 +107,94 @@ import { VegetableGameService } from './services/vegetable-game.service';
           </div>
         </div>
 
+        <!-- Nadia's Section (Middle) -->
+        <div class="section nadia-section">
+          <div class="header">
+            <h1 class="name-title">NADIA</h1>
+            <div class="emoji">🌸</div>
+          </div>
+          <div class="content-area">
+            <div class="card">
+              <div class="card-header">
+                <button class="arrow-toggle arrow-left" (click)="toggleNadiaList()">
+                  <span class="arrow-icon">{{ nadiaShowFavorites ? '◀' : '▶' }}</span>
+                </button>
+                <h2>{{ nadiaShowFavorites ? translate('favorite_things') : translate('unfavorite_things') }}</h2>
+                <button class="arrow-toggle arrow-right" (click)="toggleNadiaList()">
+                  <span class="arrow-icon">{{ nadiaShowFavorites ? '▶' : '◀' }}</span>
+                </button>
+              </div>
+              <div class="list-container">
+                <ul class="fun-list"
+                    [class.fade-out]="nadiaListAnimating"
+                    [class.fade-in]="!nadiaListAnimating"
+                    *ngIf="nadiaShowFavorites">
+                  <li (click)="showDrawingImage('NADIA')" class="clickable-item">{{ translate('drawing_painting') }}</li>
+                  <li (click)="startBookTracking('NADIA')" class="clickable-item">{{ translate('reading_books') }}</li>
+                  <li class="not-implemented">
+                    {{ translate('playing_games') }}
+                    <span class="coming-soon-icon">
+                      💡
+                      <span class="custom-tooltip">{{ translate('coming_soon_message') }}</span>
+                    </span>
+                  </li>
+                  <li class="not-implemented">
+                    {{ translate('making_crafts') }}
+                    <span class="coming-soon-icon">
+                      💡
+                      <span class="custom-tooltip">{{ translate('coming_soon_message') }}</span>
+                    </span>
+                  </li>
+                  <li (click)="startLearning('NADIA')" class="learning-item">{{ translate('learning_english') }} 📚</li>
+                </ul>
+                <ul class="fun-list unfavorite-list"
+                    [class.fade-out]="nadiaListAnimating"
+                    [class.fade-in]="!nadiaListAnimating"
+                    *ngIf="!nadiaShowFavorites">
+                  <li (click)="showCleaningImage('NADIA')" class="clickable-item">{{ translate('cleaning_room') }}</li>
+                  <li class="not-implemented">
+                    {{ translate('doing_homework') }}
+                    <span class="coming-soon-icon" (click)="$event.stopPropagation()">
+                      💡
+                      <span class="custom-tooltip">{{ translate('coming_soon_message') }}</span>
+                    </span>
+                  </li>
+                  <li (click)="showBedtimeImage('NADIA')" class="clickable-item">{{ translate('going_to_bed_early') }}</li>
+                  <li (click)="showVegetablesImage('NADIA')" class="clickable-item">{{ translate('eating_vegetables') }}</li>
+                  <li (click)="showTeethBrushingImage('NADIA')" class="clickable-item">{{ translate('brushing_teeth') }}</li>
+                </ul>
+              </div>
+            </div>
+            <div class="score-box">
+              <div class="score-label">{{ translate('stars_earned') }}</div>
+              <div class="score-value">⭐⭐⭐⭐⭐</div>
+            </div>
+            <div class="progress-box">
+              <div class="progress-label">{{ translate('words_learned') }}</div>
+              <div class="progress-value">{{ nadiaWordsLearned }} / {{ totalWords }}</div>
+              <div class="progress-bar">
+                <div class="progress-fill nadia-fill" [style.width.%]="(nadiaWordsLearned / totalWords) * 100"></div>
+              </div>
+            </div>
+            <div class="progress-box">
+              <div class="progress-label">{{ translate('rooms_cleaned') }} 🧹</div>
+              <div class="progress-value">{{ nadiaRoomsCleaned }}</div>
+            </div>
+            <div class="progress-box">
+              <div class="progress-label">{{ translate('bedtimes_completed') }} 🌙</div>
+              <div class="progress-value">{{ nadiaBedtimesCompleted }}</div>
+            </div>
+            <div class="progress-box">
+              <div class="progress-label">{{ translate('teeth_brushed') }} 🦷</div>
+              <div class="progress-value">{{ nadiaTeethBrushed }}</div>
+            </div>
+            <div class="progress-box">
+              <div class="progress-label">{{ translate('vegetables_eaten') }} 🥦</div>
+              <div class="progress-value">{{ nadiaVegetablesCompleted }}</div>
+            </div>
+          </div>
+        </div>
+
         <!-- Michał's Section (Right) -->
         <div class="section michal-section">
           <div class="header">
@@ -139,13 +221,7 @@ import { VegetableGameService } from './services/vegetable-game.service';
                       <span class="custom-tooltip">{{ translate('coming_soon_message') }}</span>
                     </span>
                   </li>
-                  <li class="not-implemented">
-                    {{ translate('sports_soccer') }}
-                    <span class="coming-soon-icon">
-                      💡
-                      <span class="custom-tooltip">{{ translate('coming_soon_message') }}</span>
-                    </span>
-                  </li>
+                  <li (click)="showDrawingImage('MICHAL')" class="clickable-item">{{ translate('drawing_painting') }}</li>
                   <li (click)="startBookTracking('MICHAL')" class="clickable-item">{{ translate('reading_books') }}</li>
                   <li class="not-implemented">
                     {{ translate('building_legos') }}
@@ -251,10 +327,18 @@ import { VegetableGameService } from './services/vegetable-game.service';
         (vegetablesCompleted)="onVegetablesCompleted()">
       </app-vegetable-game>
 
+      <!-- Drawing Game Screen -->
+      <app-drawing-game
+        *ngIf="currentView === 'drawing' && isAuthenticated"
+        [playerName]="currentPlayer"
+        (backToHome)="goHome()">
+      </app-drawing-game>
+
       <!-- Cleaning Room Image Modal -->
       <div class="image-modal-overlay" *ngIf="showCleaningModal" (click)="closeCleaningModal()">
         <div class="image-modal-content"
              [class.ania-modal]="cleaningPlayer === 'ANIA'"
+             [class.nadia-modal]="cleaningPlayer === 'NADIA'"
              [class.michal-modal]="cleaningPlayer === 'MICHAL'"
              (click)="$event.stopPropagation()">
           <button class="modal-close-btn" (click)="closeCleaningModal()">×</button>
@@ -270,6 +354,7 @@ import { VegetableGameService } from './services/vegetable-game.service';
       <div class="image-modal-overlay" *ngIf="showBedtimeModal" (click)="closeBedtimeModal()">
         <div class="image-modal-content bedtime-modal"
              [class.ania-modal]="bedtimePlayer === 'ANIA'"
+             [class.nadia-modal]="bedtimePlayer === 'NADIA'"
              [class.michal-modal]="bedtimePlayer === 'MICHAL'"
              (click)="$event.stopPropagation()">
           <button class="modal-close-btn" (click)="closeBedtimeModal()">×</button>
@@ -285,6 +370,7 @@ import { VegetableGameService } from './services/vegetable-game.service';
       <div class="image-modal-overlay" *ngIf="showTeethModal" (click)="closeTeethModal()">
         <div class="image-modal-content teeth-modal"
              [class.ania-modal]="teethPlayer === 'ANIA'"
+             [class.nadia-modal]="teethPlayer === 'NADIA'"
              [class.michal-modal]="teethPlayer === 'MICHAL'"
              (click)="$event.stopPropagation()">
           <button class="modal-close-btn" (click)="closeTeethModal()">×</button>
@@ -300,6 +386,7 @@ import { VegetableGameService } from './services/vegetable-game.service';
       <div class="image-modal-overlay" *ngIf="showVegetablesModal" (click)="closeVegetablesModal()">
         <div class="image-modal-content vegetables-modal"
              [class.ania-modal]="vegetablesPlayer === 'ANIA'"
+             [class.nadia-modal]="vegetablesPlayer === 'NADIA'"
              [class.michal-modal]="vegetablesPlayer === 'MICHAL'"
              (click)="$event.stopPropagation()">
           <button class="modal-close-btn" (click)="closeVegetablesModal()">×</button>
@@ -307,6 +394,22 @@ import { VegetableGameService } from './services/vegetable-game.service';
           <h2 class="modal-title">{{ translate('eating_vegetables') }} 🥦</h2>
           <button class="vegetables-btn" (click)="startVegetablesGame()">
             {{ translate('play_vegetable_game') }} 🏹
+          </button>
+        </div>
+      </div>
+
+      <!-- Drawing/Painting Image Modal -->
+      <div class="image-modal-overlay" *ngIf="showDrawingModal" (click)="closeDrawingModal()">
+        <div class="image-modal-content drawing-modal"
+             [class.ania-modal]="drawingPlayer === 'ANIA'"
+             [class.nadia-modal]="drawingPlayer === 'NADIA'"
+             [class.michal-modal]="drawingPlayer === 'MICHAL'"
+             (click)="$event.stopPropagation()">
+          <button class="modal-close-btn" (click)="closeDrawingModal()">×</button>
+          <img [src]="getDrawingImage()" [alt]="translate('drawing_painting')" class="cleaning-image">
+          <h2 class="modal-title">{{ translate('drawing_painting') }} 🎨</h2>
+          <button class="drawing-btn" (click)="startDrawingGame()">
+            {{ translate('start_drawing') }} 🖌️
           </button>
         </div>
       </div>
@@ -322,7 +425,7 @@ import { VegetableGameService } from './services/vegetable-game.service';
     }
 
     .section {
-      width: 50%;
+      width: 33.33%;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -334,6 +437,12 @@ import { VegetableGameService } from './services/vegetable-game.service';
 
     .ania-section {
       background: linear-gradient(135deg, #ff6b9d 0%, #ffa5c8 100%);
+      border-right: 5px solid #fff;
+    }
+
+    .nadia-section {
+      background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+      border-left: 5px solid #fff;
       border-right: 5px solid #fff;
     }
 
@@ -749,6 +858,10 @@ import { VegetableGameService } from './services/vegetable-game.service';
       background: linear-gradient(90deg, #ff6b9d 0%, #ffa5c8 100%);
     }
 
+    .nadia-fill {
+      background: linear-gradient(90deg, #a18cd1 0%, #fbc2eb 100%);
+    }
+
     .michal-fill {
       background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
     }
@@ -851,6 +964,10 @@ import { VegetableGameService } from './services/vegetable-game.service';
 
     .ania-modal {
       border: 5px solid #ff6b9d;
+    }
+
+    .nadia-modal {
+      border: 5px solid #a18cd1;
     }
 
     .michal-modal {
@@ -994,47 +1111,82 @@ import { VegetableGameService } from './services/vegetable-game.service';
     .vegetables-btn:active {
       transform: translateY(0);
     }
+
+    .drawing-btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: 2px solid white;
+      border-radius: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Quicksand', sans-serif;
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .drawing-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.6);
+      background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    }
+
+    .drawing-btn:active {
+      transform: translateY(0);
+    }
   `]
 })
 export class AppComponent implements OnInit {
   title = 'Ania & Michal';
   currentLanguage: 'en' | 'pl' = 'en';
-  currentView: 'home' | 'game' | 'books' | 'cleaning' | 'bedtime' | 'teeth' | 'vegetables' = 'home';
+  currentView: 'home' | 'game' | 'books' | 'cleaning' | 'bedtime' | 'teeth' | 'vegetables' | 'drawing' = 'home';
   currentPlayer: string = 'ANIA';
   isAuthenticated: boolean = false;
 
   aniaWordsLearned: number = 0;
+  nadiaWordsLearned: number = 0;
   michalWordsLearned: number = 0;
   totalWords: number = 0;
 
   aniaRoomsCleaned: number = 0;
+  nadiaRoomsCleaned: number = 0;
   michalRoomsCleaned: number = 0;
 
   aniaBedtimesCompleted: number = 0;
+  nadiaBedtimesCompleted: number = 0;
   michalBedtimesCompleted: number = 0;
 
   aniaTeethBrushed: number = 0;
+  nadiaTeethBrushed: number = 0;
   michalTeethBrushed: number = 0;
 
   aniaVegetablesCompleted: number = 0;
+  nadiaVegetablesCompleted: number = 0;
   michalVegetablesCompleted: number = 0;
 
   aniaShowFavorites: boolean = true;
+  nadiaShowFavorites: boolean = true;
   michalShowFavorites: boolean = true;
   aniaListAnimating: boolean = false;
+  nadiaListAnimating: boolean = false;
   michalListAnimating: boolean = false;
 
   showCleaningModal: boolean = false;
-  cleaningPlayer: 'ANIA' | 'MICHAL' = 'ANIA';
+  cleaningPlayer: 'ANIA' | 'NADIA' | 'MICHAL' = 'ANIA';
 
   showBedtimeModal: boolean = false;
-  bedtimePlayer: 'ANIA' | 'MICHAL' = 'ANIA';
+  bedtimePlayer: 'ANIA' | 'NADIA' | 'MICHAL' = 'ANIA';
 
   showTeethModal: boolean = false;
-  teethPlayer: 'ANIA' | 'MICHAL' = 'ANIA';
+  teethPlayer: 'ANIA' | 'NADIA' | 'MICHAL' = 'ANIA';
 
   showVegetablesModal: boolean = false;
-  vegetablesPlayer: 'ANIA' | 'MICHAL' = 'ANIA';
+  vegetablesPlayer: 'ANIA' | 'NADIA' | 'MICHAL' = 'ANIA';
+
+  showDrawingModal: boolean = false;
+  drawingPlayer: 'ANIA' | 'NADIA' | 'MICHAL' = 'ANIA';
 
   constructor(
     public translationService: TranslationService,
@@ -1066,6 +1218,11 @@ export class AppComponent implements OnInit {
       this.aniaWordsLearned = progress.wordsLearned;
     });
 
+    // Subscribe to Nadia's progress
+    this.progressService.nadiaProgress$.subscribe(progress => {
+      this.nadiaWordsLearned = progress.wordsLearned;
+    });
+
     // Subscribe to Michal's progress
     this.progressService.michalProgress$.subscribe(progress => {
       this.michalWordsLearned = progress.wordsLearned;
@@ -1074,6 +1231,10 @@ export class AppComponent implements OnInit {
     // Subscribe to room cleaning stats
     this.roomCleaningService.aniaRooms$.subscribe(stats => {
       this.aniaRoomsCleaned = stats.roomsCleaned;
+    });
+
+    this.roomCleaningService.nadiaRooms$.subscribe(stats => {
+      this.nadiaRoomsCleaned = stats.roomsCleaned;
     });
 
     this.roomCleaningService.michalRooms$.subscribe(stats => {
@@ -1085,6 +1246,10 @@ export class AppComponent implements OnInit {
       this.aniaBedtimesCompleted = stats.bedtimesCompleted;
     });
 
+    this.bedtimeService.nadiaBedtimes$.subscribe(stats => {
+      this.nadiaBedtimesCompleted = stats.bedtimesCompleted;
+    });
+
     this.bedtimeService.michalBedtimes$.subscribe(stats => {
       this.michalBedtimesCompleted = stats.bedtimesCompleted;
     });
@@ -1094,6 +1259,10 @@ export class AppComponent implements OnInit {
       this.aniaTeethBrushed = stats.teethBrushed;
     });
 
+    this.teethBrushingService.nadiaTeeth$.subscribe(stats => {
+      this.nadiaTeethBrushed = stats.teethBrushed;
+    });
+
     this.teethBrushingService.michalTeeth$.subscribe(stats => {
       this.michalTeethBrushed = stats.teethBrushed;
     });
@@ -1101,6 +1270,10 @@ export class AppComponent implements OnInit {
     // Subscribe to vegetable game stats
     this.vegetableGameService.aniaVegetables$.subscribe(stats => {
       this.aniaVegetablesCompleted = stats.vegetablesCompleted;
+    });
+
+    this.vegetableGameService.nadiaVegetables$.subscribe(stats => {
+      this.nadiaVegetablesCompleted = stats.vegetablesCompleted;
     });
 
     this.vegetableGameService.michalVegetables$.subscribe(stats => {
@@ -1133,6 +1306,14 @@ export class AppComponent implements OnInit {
     }, 600);
   }
 
+  toggleNadiaList(): void {
+    this.nadiaListAnimating = true;
+    setTimeout(() => {
+      this.nadiaShowFavorites = !this.nadiaShowFavorites;
+      this.nadiaListAnimating = false;
+    }, 600);
+  }
+
   toggleMichalList(): void {
     this.michalListAnimating = true;
     setTimeout(() => {
@@ -1146,7 +1327,7 @@ export class AppComponent implements OnInit {
     this.currentView = 'books';
   }
 
-  showCleaningImage(player: 'ANIA' | 'MICHAL'): void {
+  showCleaningImage(player: 'ANIA' | 'NADIA' | 'MICHAL'): void {
     this.cleaningPlayer = player;
     this.showCleaningModal = true;
   }
@@ -1158,6 +1339,8 @@ export class AppComponent implements OnInit {
   getCleaningImage(): string {
     if (this.cleaningPlayer === 'ANIA') {
       return 'assets/img/tired_exhausted-girl.png';
+    } else if (this.cleaningPlayer === 'NADIA') {
+      return 'assets/img/tired_exhausted-girl.png'; // Use same image as Ania for now
     } else {
       return 'assets/img/tired_exhausted-child.png';
     }
@@ -1170,11 +1353,11 @@ export class AppComponent implements OnInit {
   }
 
   onRoomCleaned(): void {
-    const player = this.currentPlayer as 'ANIA' | 'MICHAL';
+    const player = this.currentPlayer as 'ANIA' | 'NADIA' | 'MICHAL';
     this.roomCleaningService.incrementRoomsCleaned(player);
   }
 
-  showBedtimeImage(player: 'ANIA' | 'MICHAL'): void {
+  showBedtimeImage(player: 'ANIA' | 'NADIA' | 'MICHAL'): void {
     this.bedtimePlayer = player;
     this.showBedtimeModal = true;
   }
@@ -1186,6 +1369,8 @@ export class AppComponent implements OnInit {
   getBedtimeImage(): string {
     if (this.bedtimePlayer === 'ANIA') {
       return 'assets/img/10y_old_girl_laying-on_bed.png';
+    } else if (this.bedtimePlayer === 'NADIA') {
+      return 'assets/img/10y_old_girl_laying-on_bed.png'; // Use same image as Ania for now
     } else {
       return 'assets/img/10yr_old_boy_laying_on_bed.png';
     }
@@ -1198,11 +1383,11 @@ export class AppComponent implements OnInit {
   }
 
   onBedtimeCompleted(): void {
-    const player = this.currentPlayer as 'ANIA' | 'MICHAL';
+    const player = this.currentPlayer as 'ANIA' | 'NADIA' | 'MICHAL';
     this.bedtimeService.incrementBedtimes(player);
   }
 
-  showTeethBrushingImage(player: 'ANIA' | 'MICHAL'): void {
+  showTeethBrushingImage(player: 'ANIA' | 'NADIA' | 'MICHAL'): void {
     this.teethPlayer = player;
     this.showTeethModal = true;
   }
@@ -1214,6 +1399,8 @@ export class AppComponent implements OnInit {
   getTeethImage(): string {
     if (this.teethPlayer === 'ANIA') {
       return 'assets/img/10yr_old_girl_brushing_teeth.png';
+    } else if (this.teethPlayer === 'NADIA') {
+      return 'assets/img/10yr_old_girl_brushing_teeth.png'; // Use same image as Ania for now
     } else {
       return 'assets/img/10yr_old_boy_brushing_teeth.png';
     }
@@ -1226,11 +1413,11 @@ export class AppComponent implements OnInit {
   }
 
   onTeethBrushed(): void {
-    const player = this.currentPlayer as 'ANIA' | 'MICHAL';
+    const player = this.currentPlayer as 'ANIA' | 'NADIA' | 'MICHAL';
     this.teethBrushingService.incrementTeethBrushed(player);
   }
 
-  showVegetablesImage(player: 'ANIA' | 'MICHAL'): void {
+  showVegetablesImage(player: 'ANIA' | 'NADIA' | 'MICHAL'): void {
     this.vegetablesPlayer = player;
     this.showVegetablesModal = true;
   }
@@ -1242,6 +1429,8 @@ export class AppComponent implements OnInit {
   getVegetablesImage(): string {
     if (this.vegetablesPlayer === 'ANIA') {
       return 'assets/img/10yr_old_girl_broccoli.png';
+    } else if (this.vegetablesPlayer === 'NADIA') {
+      return 'assets/img/10yr_old_girl_broccoli.png'; // Use same image as Ania for now
     } else {
       return 'assets/img/10yr_old_boy_broccoli.png';
     }
@@ -1254,7 +1443,32 @@ export class AppComponent implements OnInit {
   }
 
   onVegetablesCompleted(): void {
-    const player = this.currentPlayer as 'ANIA' | 'MICHAL';
+    const player = this.currentPlayer as 'ANIA' | 'NADIA' | 'MICHAL';
     this.vegetableGameService.incrementVegetablesCompleted(player);
+  }
+
+  showDrawingImage(player: 'ANIA' | 'NADIA' | 'MICHAL'): void {
+    this.drawingPlayer = player;
+    this.showDrawingModal = true;
+  }
+
+  closeDrawingModal(): void {
+    this.showDrawingModal = false;
+  }
+
+  getDrawingImage(): string {
+    if (this.drawingPlayer === 'ANIA') {
+      return 'assets/img/10_year_old_girl_painting_flowers.png';
+    } else if (this.drawingPlayer === 'NADIA') {
+      return 'assets/img/10_year_old_girl_painting_flowers.png';
+    } else {
+      return 'assets/img/10_year_old_boy_painting_dinosaurs.png';
+    }
+  }
+
+  startDrawingGame(): void {
+    this.currentPlayer = this.drawingPlayer;
+    this.showDrawingModal = false;
+    this.currentView = 'drawing';
   }
 }

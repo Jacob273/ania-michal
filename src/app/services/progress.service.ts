@@ -26,6 +26,13 @@ export class ProgressService {
     shuffledIndices: [],
     learnedWordIds: []
   });
+  private nadiaProgress = new BehaviorSubject<PlayerProgress>({
+    wordsLearned: 0,
+    currentWordIndex: 0,
+    failedWords: [],
+    shuffledIndices: [],
+    learnedWordIds: []
+  });
   private michalProgress = new BehaviorSubject<PlayerProgress>({
     wordsLearned: 0,
     currentWordIndex: 0,
@@ -35,6 +42,7 @@ export class ProgressService {
   });
 
   public aniaProgress$: Observable<PlayerProgress> = this.aniaProgress.asObservable();
+  public nadiaProgress$: Observable<PlayerProgress> = this.nadiaProgress.asObservable();
   public michalProgress$: Observable<PlayerProgress> = this.michalProgress.asObservable();
 
   private allWordPairs: WordPair[] = [];
@@ -52,6 +60,7 @@ export class ProgressService {
 
   private loadProgress(): void {
     const aniaData = localStorage.getItem('aniaProgress');
+    const nadiaData = localStorage.getItem('nadiaProgress');
     const michalData = localStorage.getItem('michalProgress');
 
     if (aniaData) {
@@ -78,6 +87,32 @@ export class ProgressService {
       const progress = this.aniaProgress.value;
       progress.shuffledIndices = this.createShuffledIndices();
       this.aniaProgress.next(progress);
+    }
+
+    if (nadiaData) {
+      const progress = JSON.parse(nadiaData);
+      // Initialize shuffled indices if not present
+      if (!progress.shuffledIndices || progress.shuffledIndices.length === 0) {
+        progress.shuffledIndices = this.createShuffledIndices();
+      }
+      // IMPORTANT: Check if word database has grown (e.g., from 100 to 2000 words)
+      // If shuffledIndices is shorter than total words, regenerate to include new words
+      if (progress.shuffledIndices.length < this.allWordPairs.length) {
+        // Reset to start from beginning with new expanded word set
+        progress.shuffledIndices = this.createShuffledIndices();
+        progress.currentWordIndex = 0;
+        // Keep wordsLearned counter - user doesn't lose progress!
+      }
+      // Initialize learnedWordIds if not present (backward compatibility)
+      if (!progress.learnedWordIds) {
+        progress.learnedWordIds = [];
+      }
+      this.nadiaProgress.next(progress);
+    } else {
+      // Create shuffled order for new player
+      const progress = this.nadiaProgress.value;
+      progress.shuffledIndices = this.createShuffledIndices();
+      this.nadiaProgress.next(progress);
     }
 
     if (michalData) {
@@ -118,19 +153,21 @@ export class ProgressService {
     return indices;
   }
 
-  private saveProgress(player: 'ANIA' | 'MICHAL'): void {
+  private saveProgress(player: 'ANIA' | 'NADIA' | 'MICHAL'): void {
     if (player === 'ANIA') {
       localStorage.setItem('aniaProgress', JSON.stringify(this.aniaProgress.value));
+    } else if (player === 'NADIA') {
+      localStorage.setItem('nadiaProgress', JSON.stringify(this.nadiaProgress.value));
     } else {
       localStorage.setItem('michalProgress', JSON.stringify(this.michalProgress.value));
     }
   }
 
-  getProgress(player: 'ANIA' | 'MICHAL'): PlayerProgress {
-    return player === 'ANIA' ? this.aniaProgress.value : this.michalProgress.value;
+  getProgress(player: 'ANIA' | 'NADIA' | 'MICHAL'): PlayerProgress {
+    return player === 'ANIA' ? this.aniaProgress.value : player === 'NADIA' ? this.nadiaProgress.value : this.michalProgress.value;
   }
 
-  getNextWords(player: 'ANIA' | 'MICHAL', count: number = 8): WordPair[] {
+  getNextWords(player: 'ANIA' | 'NADIA' | 'MICHAL', count: number = 8): WordPair[] {
     const progress = this.getProgress(player);
     const words: WordPair[] = [];
     const updatedProgress = { ...progress };
@@ -168,7 +205,7 @@ export class ProgressService {
     return words;
   }
 
-  markWordCorrect(player: 'ANIA' | 'MICHAL', wordIndex: number): void {
+  markWordCorrect(player: 'ANIA' | 'NADIA' | 'MICHAL', wordIndex: number): void {
     const progress = this.getProgress(player);
     const updatedProgress = { ...progress };
     updatedProgress.wordsLearned += 1;
@@ -176,7 +213,7 @@ export class ProgressService {
     this.updateProgress(player, updatedProgress);
   }
 
-  markWordFailed(player: 'ANIA' | 'MICHAL', wordIndex: number): void {
+  markWordFailed(player: 'ANIA' | 'NADIA' | 'MICHAL', wordIndex: number): void {
     const progress = this.getProgress(player);
     const updatedProgress = { ...progress };
 
@@ -188,15 +225,17 @@ export class ProgressService {
     this.updateProgress(player, updatedProgress);
   }
 
-  completeRound(player: 'ANIA' | 'MICHAL', wordsInRound: number = 8): void {
+  completeRound(player: 'ANIA' | 'NADIA' | 'MICHAL', wordsInRound: number = 8): void {
     // Round completion logic
     // Note: currentWordIndex is already advanced in getNextWords when new words are shown
     // This method can be used for any round completion tasks like awarding bonuses, etc.
   }
 
-  private updateProgress(player: 'ANIA' | 'MICHAL', progress: PlayerProgress): void {
+  private updateProgress(player: 'ANIA' | 'NADIA' | 'MICHAL', progress: PlayerProgress): void {
     if (player === 'ANIA') {
       this.aniaProgress.next(progress);
+    } else if (player === 'NADIA') {
+      this.nadiaProgress.next(progress);
     } else {
       this.michalProgress.next(progress);
     }
@@ -207,7 +246,7 @@ export class ProgressService {
     return this.allWordPairs.length;
   }
 
-  resetProgress(player: 'ANIA' | 'MICHAL'): void {
+  resetProgress(player: 'ANIA' | 'NADIA' | 'MICHAL'): void {
     const resetData: PlayerProgress = {
       wordsLearned: 0,
       currentWordIndex: 0,

@@ -378,6 +378,38 @@ export class TranslationService {
       en: 'Play Vegetable Game',
       pl: 'Zagraj w Grę Warzywną'
     },
+    'start_drawing': {
+      en: 'Start Drawing',
+      pl: 'Rozpocznij Rysowanie'
+    },
+    'draw_anything': {
+      en: 'Draw anything you want!',
+      pl: 'Narysuj cokolwiek chcesz!'
+    },
+    'tools': {
+      en: 'Tools',
+      pl: 'Narzędzia'
+    },
+    'brush_size': {
+      en: 'Brush Size',
+      pl: 'Rozmiar Pędzla'
+    },
+    'colors': {
+      en: 'Colors',
+      pl: 'Kolory'
+    },
+    'shapes': {
+      en: 'Shapes',
+      pl: 'Kształty'
+    },
+    'clear': {
+      en: 'Clear',
+      pl: 'Wyczyść'
+    },
+    'save': {
+      en: 'Save',
+      pl: 'Zapisz'
+    },
     'rotate_and_shoot_instruction': {
       en: 'Drag crossbows to aim, release to shoot!',
       pl: 'Przeciągnij kusze, aby celować, puść, aby strzelić!'

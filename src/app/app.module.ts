@@ -10,6 +10,7 @@ import { CleaningGameComponent } from './components/cleaning-game/cleaning-game.
 import { BedtimeGameComponent } from './components/bedtime-game/bedtime-game.component';
 import { TeethBrushingGameComponent } from './components/teeth-brushing-game/teeth-brushing-game.component';
 import { VegetableGameComponent } from './components/vegetable-game/vegetable-game.component';
+import { DrawingGameComponent } from './components/drawing-game/drawing-game.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { VegetableGameComponent } from './components/vegetable-game/vegetable-ga
     CleaningGameComponent,
     BedtimeGameComponent,
     TeethBrushingGameComponent,
-    VegetableGameComponent
+    VegetableGameComponent,
+    DrawingGameComponent
   ],
   imports: [
     BrowserModule,
