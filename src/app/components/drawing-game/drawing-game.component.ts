@@ -80,7 +80,7 @@ interface DrawingTool {
 
           <!-- Action Buttons -->
           <div class="tool-section">
-            <button class="action-btn clear-btn" (click)="clearCanvas()">
+            <button class="action-btn clear-btn" (click)="showClearModal()">
               🗑️ {{ translate('clear') }}
             </button>
             <button class="action-btn save-btn" (click)="saveDrawing()">
@@ -101,6 +101,35 @@ interface DrawingTool {
             (touchmove)="drawTouch($event)"
             (touchend)="stopDrawing()">
           </canvas>
+        </div>
+      </div>
+
+      <!-- Clear Confirmation Modal -->
+      <div class="modal-overlay" *ngIf="showClearConfirm" (click)="closeClearModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+          <div class="modal-icon">🗑️</div>
+          <h2 class="modal-title">{{ translate('clear_drawing_title') }}</h2>
+          <p class="modal-message">{{ translate('clear_drawing_message') }}</p>
+          <div class="modal-buttons">
+            <button class="modal-btn cancel-btn" (click)="closeClearModal()">
+              {{ translate('cancel') }}
+            </button>
+            <button class="modal-btn confirm-btn" (click)="confirmClear()">
+              {{ translate('yes_clear') }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Save Success Modal -->
+      <div class="modal-overlay" *ngIf="showSaveSuccess" (click)="closeSaveModal()">
+        <div class="modal-content success-modal" (click)="$event.stopPropagation()">
+          <div class="modal-icon success-icon">🎨</div>
+          <h2 class="modal-title">{{ translate('drawing_saved_title') }}</h2>
+          <p class="modal-message">{{ translate('drawing_saved_message') }}</p>
+          <button class="modal-btn confirm-btn" (click)="closeSaveModal()">
+            {{ translate('awesome') }}
+          </button>
         </div>
       </div>
     </div>
@@ -339,6 +368,137 @@ interface DrawingTool {
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
 
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 25px;
+      padding: 40px;
+      max-width: 450px;
+      width: 90%;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      animation: slideIn 0.3s ease;
+      position: relative;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+      animation: bounce 0.5s ease;
+    }
+
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+
+    .success-icon {
+      animation: rotate 0.6s ease;
+    }
+
+    @keyframes rotate {
+      from {
+        transform: rotate(0deg) scale(0);
+      }
+      to {
+        transform: rotate(360deg) scale(1);
+      }
+    }
+
+    .modal-title {
+      font-size: 28px;
+      font-weight: bold;
+      color: #333;
+      margin: 0 0 15px 0;
+    }
+
+    .modal-message {
+      font-size: 18px;
+      color: #666;
+      margin: 0 0 30px 0;
+      line-height: 1.5;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .modal-btn {
+      padding: 15px 35px;
+      border: none;
+      border-radius: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Quicksand', sans-serif;
+      min-width: 120px;
+    }
+
+    .cancel-btn {
+      background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+      color: white;
+    }
+
+    .cancel-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(149, 165, 166, 0.4);
+    }
+
+    .confirm-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .confirm-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.5);
+    }
+
+    .success-modal {
+      background: linear-gradient(135deg, #f6f9fc 0%, #e9f0f7 100%);
+      border: 3px solid #667eea;
+    }
+
     @media (max-width: 1024px) {
       .drawing-area {
         flex-direction: column;
@@ -374,6 +534,8 @@ export class DrawingGameComponent implements OnInit, AfterViewInit {
   currentColor: string = '#000000';
   currentShape: string = 'none';
   brushSize: number = 5;
+  showClearConfirm: boolean = false;
+  showSaveSuccess: boolean = false;
 
   tools: DrawingTool[] = [
     { name: 'brush', icon: '🖌️' },
@@ -651,11 +813,23 @@ export class DrawingGameComponent implements OnInit, AfterViewInit {
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
+  showClearModal(): void {
+    this.showClearConfirm = true;
+  }
+
+  closeClearModal(): void {
+    this.showClearConfirm = false;
+  }
+
+  confirmClear(): void {
+    this.ctx.fillStyle = 'white';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.closeClearModal();
+  }
+
   clearCanvas(): void {
-    if (confirm('Are you sure you want to clear your drawing?')) {
-      this.ctx.fillStyle = 'white';
-      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    }
+    this.ctx.fillStyle = 'white';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
   saveDrawing(): void {
@@ -663,7 +837,11 @@ export class DrawingGameComponent implements OnInit, AfterViewInit {
     link.download = `drawing-${this.playerName}-${Date.now()}.png`;
     link.href = this.canvas.toDataURL();
     link.click();
-    alert('Drawing saved! 🎨');
+    this.showSaveSuccess = true;
+  }
+
+  closeSaveModal(): void {
+    this.showSaveSuccess = false;
   }
 
   goBack(): void {

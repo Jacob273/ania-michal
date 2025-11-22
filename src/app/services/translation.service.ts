@@ -437,6 +437,30 @@ export class TranslationService {
     'avoid_junk_food': {
       en: 'Avoid junk food! Hitting it costs -2 points',
       pl: 'Unikaj niezdrowego jedzenia! Trafienie kosztuje -2 punkty'
+    },
+    'clear_drawing_title': {
+      en: 'Clear Your Drawing?',
+      pl: 'Wyczyścić Twój Rysunek?'
+    },
+    'clear_drawing_message': {
+      en: 'Are you sure you want to erase everything and start fresh?',
+      pl: 'Czy na pewno chcesz wymazać wszystko i zacząć od nowa?'
+    },
+    'yes_clear': {
+      en: 'Yes, Clear It!',
+      pl: 'Tak, Wyczyść!'
+    },
+    'drawing_saved_title': {
+      en: 'Masterpiece Saved!',
+      pl: 'Arcydzieło Zapisane!'
+    },
+    'drawing_saved_message': {
+      en: 'Your amazing artwork has been saved successfully!',
+      pl: 'Twoje niesamowite dzieło sztuki zostało pomyślnie zapisane!'
+    },
+    'awesome': {
+      en: 'Awesome!',
+      pl: 'Wspaniale!'
     }
   };
 
