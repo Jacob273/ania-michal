@@ -734,8 +734,9 @@ export class TeethBrushingGameComponent implements OnInit {
   onDragBrush = (event: MouseEvent): void => {
     if (!this.isDraggingBrush) return;
 
-    this.brushX = event.clientX - this.dragOffsetX;
-    this.brushY = event.clientY - this.dragOffsetY;
+    // Position brush at cursor (CSS centers it)
+    this.brushX = event.clientX;
+    this.brushY = event.clientY;
 
     // Check what element is under the cursor
     const elementUnderBrush = document.elementFromPoint(event.clientX, event.clientY);
@@ -765,17 +766,11 @@ export class TeethBrushingGameComponent implements OnInit {
 
     event.preventDefault();
 
-    const brushElement = event.currentTarget as HTMLElement;
-    const rect = brushElement.getBoundingClientRect();
     const touch = event.touches[0];
 
-    // Calculate offset from touch point to element's top-left corner
-    this.dragOffsetX = touch.clientX - rect.left;
-    this.dragOffsetY = touch.clientY - rect.top;
-
-    // Set initial position based on current screen position
-    this.brushX = rect.left;
-    this.brushY = rect.top;
+    // Set brush position to touch position (will be centered by CSS transform)
+    this.brushX = touch.clientX;
+    this.brushY = touch.clientY;
 
     // Now enable dragging mode
     this.isDraggingBrush = true;
@@ -788,8 +783,10 @@ export class TeethBrushingGameComponent implements OnInit {
     if (!this.isDraggingBrush) return;
 
     const touch = event.touches[0];
-    this.brushX = touch.clientX - this.dragOffsetX;
-    this.brushY = touch.clientY - this.dragOffsetY;
+
+    // Position brush at touch point (CSS centers it)
+    this.brushX = touch.clientX;
+    this.brushY = touch.clientY;
 
     // Check what element is under the touch point
     const elementUnderBrush = document.elementFromPoint(touch.clientX, touch.clientY);
