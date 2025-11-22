@@ -291,7 +291,7 @@ import { VegetableGameService } from './services/vegetable-game.service';
           <img [src]="getTeethImage()" [alt]="translate('brushing_teeth')" class="cleaning-image">
           <h2 class="modal-title">{{ translate('brushing_teeth') }} 🦷</h2>
           <button class="teeth-btn" (click)="startTeethBrushingGame()">
-            {{ translate('brush_your_teeth') }} 🪥
+            {{ translate('brush_your_teeth') }} 🧹
           </button>
         </div>
       </div>

@@ -112,7 +112,7 @@ interface Tooth {
                [style.top.px]="isDraggingBrush ? brushY : null"
                (mousedown)="startDragBrush($event)"
                (touchstart)="startDragBrushTouch($event)">
-            <div class="brush-handle">🪥</div>
+            <div class="brush-handle">🧹</div>
           </div>
 
           <!-- Water Tap -->
@@ -456,10 +456,10 @@ interface Tooth {
     }
 
     .toothbrush.dragging {
-      left: 0 !important;
-      top: 0 !important;
-      transform: none !important;
+      position: fixed;
+      transform: translate(-50%, -50%);
       pointer-events: none; /* Allow brush to pass through for better collision detection */
+      z-index: 9999;
     }
 
     .toothbrush.has-paste::after {
@@ -720,16 +720,9 @@ export class TeethBrushingGameComponent implements OnInit {
 
     event.preventDefault();
 
-    const brushElement = event.currentTarget as HTMLElement;
-    const rect = brushElement.getBoundingClientRect();
-
-    // Calculate offset from click point to element's top-left corner
-    this.dragOffsetX = event.clientX - rect.left;
-    this.dragOffsetY = event.clientY - rect.top;
-
-    // Set initial position based on current screen position
-    this.brushX = rect.left;
-    this.brushY = rect.top;
+    // Set brush position to cursor position (will be centered by CSS transform)
+    this.brushX = event.clientX;
+    this.brushY = event.clientY;
 
     // Now enable dragging mode
     this.isDraggingBrush = true;
