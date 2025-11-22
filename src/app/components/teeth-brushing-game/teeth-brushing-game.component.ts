@@ -513,7 +513,7 @@ interface Tooth {
     .water-tap {
       position: absolute;
       top: 50px;
-      right: 100px;
+      left: calc(50% + 350px);
       cursor: pointer;
       user-select: none;
       z-index: 15;
